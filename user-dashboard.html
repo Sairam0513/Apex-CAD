@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Apex CAD and Survey Solutions</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-blue: #4f46e5;
+            --secondary-purple: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --concrete-gray: #64748b;
+            --light-gray: #94a3b8;
+        }
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%);
+            min-height: 100vh;
+        }
+        
+        /* Blueprint/CAD Grid Background */
+        .blueprint-bg {
+            background-image: 
+                linear-gradient(rgba(30, 58, 138, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 58, 138, 0.04) 1px, transparent 1px),
+                linear-gradient(rgba(30, 58, 138, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 58, 138, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            animation: gridShift 20s linear infinite;
+        }
+        
+        @keyframes gridShift {
+            0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+            100% { background-position: 40px 40px, 40px 40px, 200px 200px, 200px 200px; }
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem 3rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-header:hover {
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+        
+        .logo-img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+            animation: fadeInRight 0.6s ease-out;
+        }
+        
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+        
+        .user-email {
+            font-size: 0.85rem;
+            color: var(--concrete-gray);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+            transition: all 0.4s ease;
+            animation: fadeInRight 0.6s ease-out 0.2s both;
+        }
+        
+        .user-avatar:hover {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        }
+        
+        .logout-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            animation: fadeInRight 0.6s ease-out 0.4s both;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
+        }
+        
+        /* Main Content */
+        .dashboard-main {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+        
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--concrete-gray);
+            line-height: 1.6;
+        }
+        
+        .courses-section {
+            margin-top: 3rem;
+        }
+        
+        .section-header {
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--concrete-gray);
+        }
+        
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .course-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+        
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple), var(--accent-cyan));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .course-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .course-card:nth-child(1) { animation-delay: 0.3s; }
+        .course-card:nth-child(2) { animation-delay: 0.4s; }
+        .course-card:nth-child(3) { animation-delay: 0.5s; }
+        .course-card:nth-child(4) { animation-delay: 0.6s; }
+        .course-card:nth-child(5) { animation-delay: 0.7s; }
+        
+        .course-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 70px rgba(79, 70, 229, 0.2);
+        }
+        
+        .course-image-container {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
+        }
+        
+        .course-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .course-card:hover .course-image {
+            transform: scale(1.15) rotate(2deg);
+        }
+        
+        .course-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+            transition: all 0.4s ease;
+            position: absolute;
+            top: -35px;
+            right: 2rem;
+            z-index: 2;
+        }
+        
+        .course-card:hover .course-icon {
+            transform: rotate(10deg) scale(1.15);
+            box-shadow: 0 12px 35px rgba(6, 182, 212, 0.5);
+        }
+        
+        .course-content {
+            padding: 2.5rem;
+        }
+        
+        .course-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .course-description {
+            color: var(--concrete-gray);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        
+        .course-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .course-features li {
+            color: var(--concrete-gray);
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+        }
+        
+        .course-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .enroll-btn {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .enroll-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .enroll-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .enroll-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(79, 70, 229, 0.5);
+        }
+        
+        .enroll-btn:active {
+            transform: translateY(-1px) scale(1);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .dashboard-header {
+                padding: 1.25rem 1.5rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .user-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dashboard-main {
+                padding: 2rem 1.5rem;
+            }
+            
+            .welcome-section {
+                padding: 2rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .courses-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .welcome-title {
+                font-size: 1.75rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="blueprint-bg"></div>
+    
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="logo.jpg.jpeg" alt="Apex CAD Logo" class="logo-img">
+                <span class="logo-text">Apex CAD Solutions</span>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-email" id="userEmail">Loading...</div>
+                </div>
+                <div class="user-avatar" id="userAvatar">U</div>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Dashboard Content -->
+    <main class="dashboard-main">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1 class="welcome-title">Welcome to Your Learning Portal</h1>
+            <p class="welcome-subtitle">
+                Explore our comprehensive CAD and Civil Survey courses designed to advance your career in civil engineering. 
+                Each course offers industry-standard training and certification upon completion.
+            </p>
+        </section>
+        
+        <!-- Available Courses Section -->
+        <section class="courses-section">
+            <div class="section-header">
+                <h2 class="section-title">Available Courses</h2>
+                <p class="section-subtitle">Choose from our selection of professional training programs</p>
+            </div>
+            
+            <div class="courses-grid">
+                <!-- AutoCAD Course -->
+                <div class="course-card">
+                    <div class="course-image-container">
+                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="300" fill="url(#grad1)"/>
+                            <g stroke="rgba(255,255,255,0.2)" stroke-width="1">
+                                <line x1="0" y1="50" x2="400" y2="50"/><line x1="0" y1="100" x2="400" y2="100"/>
+                                <line x1="0" y1="150" x2="400" y2="150"/><line x1="0" y1="200" x2="400" y2="200"/>
+                                <line x1="50" y1="0" x2="50" y2="300"/><line x1="200" y1="0" x2="200" y2="300"/>
+                                <line x1="350" y1="0" x2="350" y2="300"/>
+                            </g>
+                            <rect x="100" y="100" width="200" height="100" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
+                            <circle cx="200" cy="150" r="30" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
+                        </svg>
+                        <div class="course-icon"><i class="fas fa-drafting-compass"></i></div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">AutoCAD</h3>
+                        <p class="course-description">
+                            Master 2D drafting, dimensioning, and technical drawing with industry-standard AutoCAD.
+                        </p>
+                        <ul class="course-features">
+                            <li>2D Drafting & Design</li>
+                            <li>Technical Drawing Standards</li>
+                            <li>Layer & Dimension Management</li>
+                            <li>Industry Certification</li>
+                        </ul>
+                        <button class="enroll-btn" onclick="enrollCourse('AutoCAD')">
+                            <i class="fas fa-check-circle"></i> Enroll Now
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- ETABS Course -->
+                <div class="course-card">
+                    <div class="course-image-container">
+                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="300" fill="url(#grad2)"/>
+                            <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
+                                <line x1="50" y1="250" x2="350" y2="250"/>
+                                <line x1="100" y1="250" x2="100" y2="100"/>
+                                <line x1="200" y1="250" x2="200" y2="80"/>
+                                <line x1="300" y1="250" x2="300" y2="100"/>
+                                <line x1="100" y1="100" x2="200" y2="80"/>
+                                <line x1="200" y1="80" x2="300" y2="100"/>
+                            </g>
+                        </svg>
+                        <div class="course-icon"><i class="fas fa-building"></i></div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">ETABS</h3>
+                        <p class="course-description">
+                            Learn building analysis and design with ETABS for structural modeling and high-rise structures.
+                        </p>
+                        <ul class="course-features">
+                            <li>Structural Analysis</li>
+                            <li>Building Modeling</li>
+                            <li>Load & Design Codes</li>
+                            <li>Industry Certification</li>
+                        </ul>
+                        <button class="enroll-btn" onclick="enrollCourse('ETABS')">
+                            <i class="fas fa-check-circle"></i> Enroll Now
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- STAAD Pro Course -->
+                <div class="course-card">
+                    <div class="course-image-container">
+                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#14b8a6;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="300" fill="url(#grad3)"/>
+                            <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
+                                <line x1="80" y1="220" x2="320" y2="220"/>
+                                <line x1="120" y1="220" x2="120" y2="100"/>
+                                <line x1="200" y1="220" x2="200" y2="70"/>
+                                <line x1="280" y1="220" x2="280" y2="100"/>
+                            </g>
+                        </svg>
+                        <div class="course-icon"><i class="fas fa-cubes"></i></div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">STAAD Pro</h3>
+                        <p class="course-description">
+                            Professional structural analysis and design for steel, concrete, and composite structures.
+                        </p>
+                        <ul class="course-features">
+                            <li>Structural Analysis</li>
+                            <li>Steel & Concrete Design</li>
+                            <li>Code Compliance</li>
+                            <li>Industry Certification</li>
+                        </ul>
+                        <button class="enroll-btn" onclick="enrollCourse('STAAD Pro')">
+                            <i class="fas fa-check-circle"></i> Enroll Now
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Revit Architecture Course -->
+                <div class="course-card">
+                    <div class="course-image-container">
+                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="300" fill="url(#grad4)"/>
+                            <g transform="translate(200,150)">
+                                <rect x="-80" y="-60" width="160" height="120" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="2"/>
+                                <polygon points="-80,-60 0,-120 80,-60" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
+                            </g>
+                        </svg>
+                        <div class="course-icon"><i class="fas fa-cube"></i></div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">Revit Architecture</h3>
+                        <p class="course-description">
+                            BIM-based architectural design with detailed 3D modeling and coordinated documentation.
+                        </p>
+                        <ul class="course-features">
+                            <li>BIM Workflows</li>
+                            <li>3D Modeling & Documentation</li>
+                            <li>Coordination & Visualization</li>
+                            <li>Industry Certification</li>
+                        </ul>
+                        <button class="enroll-btn" onclick="enrollCourse('Revit Architecture')">
+                            <i class="fas fa-check-circle"></i> Enroll Now
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Total Station Course -->
+                <div class="course-card">
+                    <div class="course-image-container">
+                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="400" height="300" fill="url(#grad5)"/>
+                            <g transform="translate(200,150)">
+                                <circle cx="0" cy="0" r="35" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
+                                <circle cx="0" cy="0" r="25" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
+                                <line x1="-35" y1="0" x2="35" y2="0" stroke="white" stroke-width="2"/>
+                            </g>
+                        </svg>
+                        <div class="course-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">Total Station</h3>
+                        <p class="course-description">
+                            Land surveying with Total Station for field measurements and topographic surveys.
+                        </p>
+                        <ul class="course-features">
+                            <li>Field Survey & Measurements</li>
+                            <li>Topographic Mapping</li>
+                            <li>Construction Layout</li>
+                            <li>Industry Certification</li>
+                        </ul>
+                        <button class="enroll-btn" onclick="enrollCourse('Total Station')">
+                            <i class="fas fa-check-circle"></i> Enroll Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        // Check authentication and load user data
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const currentUser = sessionStorage.getItem('currentUser');
+            
+            if (!currentUser) {
+                // Redirect to login if not authenticated
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const userData = JSON.parse(currentUser);
+            
+            // Display user information
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('userEmail').textContent = userData.email;
+            
+            // Set avatar initial
+            const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('userAvatar').textContent = initials;
+        });
+        
+        // Logout handler
+        async function handleLogout() {
+            try {
+                await firebaseAuth.signOut();
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Error logging out. Please try again.');
+            }
+        }
+        
+        // Enroll in course handler
+        function enrollCourse(courseName) {
+            alert(`Enrollment for ${courseName} will be available soon!\n\nThis feature is currently under development. You will be notified when enrollment opens.`);
+            
+            // TODO: Implement course enrollment logic
+            // This could involve:
+            // 1. Saving enrollment to Firestore
+            // 2. Sending confirmation email
+            // 3. Redirecting to course materials
+        }
+    </script>
+</body>
+</html>

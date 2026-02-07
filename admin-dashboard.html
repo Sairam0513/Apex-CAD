@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Apex CAD and Survey Solutions</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-blue: #4f46e5;
+            --secondary-purple: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --concrete-gray: #64748b;
+            --light-gray: #94a3b8;
+        }
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%);
+            min-height: 100vh;
+        }
+        
+        /* Blueprint/CAD Grid Background */
+        .blueprint-bg {
+            background-image: 
+                linear-gradient(rgba(30, 58, 138, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 58, 138, 0.04) 1px, transparent 1px),
+                linear-gradient(rgba(30, 58, 138, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 58, 138, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            animation: gridShift 20s linear infinite;
+        }
+        
+        @keyframes gridShift {
+            0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+            100% { background-position: 40px 40px, 40px 40px, 200px 200px, 200px 200px; }
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem 3rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-header:hover {
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+        
+        .logo-img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            border-radius: 10px;
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .user-info {
+            text-align: right;
+            animation: fadeInRight 0.6s ease-out;
+        }
+        
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+        
+        .user-email {
+            font-size: 0.85rem;
+            color: var(--concrete-gray);
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+            transition: all 0.4s ease;
+            animation: fadeInRight 0.6s ease-out 0.2s both;
+        }
+        
+        .user-avatar:hover {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+        
+        .logout-btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            animation: fadeInRight 0.6s ease-out 0.4s both;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
+        }
+        
+        /* Main Content */
+        .dashboard-main {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+        
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--concrete-gray);
+            line-height: 1.6;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.2s; }
+        .stat-card:nth-child(2) { animation-delay: 0.3s; }
+        .stat-card:nth-child(3) { animation-delay: 0.4s; }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple), var(--accent-cyan));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(79, 70, 229, 0.2);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .stat-card:hover .stat-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--concrete-gray);
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+        
+        /* Users Section */
+        .users-section {
+            margin-top: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--concrete-gray);
+        }
+        
+        .users-table-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .users-table thead {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            color: white;
+        }
+        
+        .users-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .users-table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .users-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+        }
+        
+        .users-table td {
+            padding: 1.25rem 1.5rem;
+            color: var(--concrete-gray);
+        }
+        
+        .user-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-initial {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .user-type-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .badge-user {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            color: var(--primary-blue);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+        
+        .badge-admin {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+        
+        .no-users {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--concrete-gray);
+        }
+        
+        .no-users i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(79, 70, 229, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-blue);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-container {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .dashboard-header {
+                padding: 1.25rem 1.5rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .user-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .dashboard-main {
+                padding: 2rem 1.5rem;
+            }
+            
+            .welcome-section {
+                padding: 2rem;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .users-table-container {
+                overflow-x: auto;
+            }
+            
+            .users-table {
+                min-width: 800px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .admin-badge {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .welcome-title {
+                font-size: 1.75rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="blueprint-bg"></div>
+    
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="logo.jpg.jpeg" alt="Apex CAD Logo" class="logo-img">
+                <span class="logo-text">Apex CAD Solutions</span>
+                <span class="admin-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Admin Panel
+                </span>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-name" id="adminName">Loading...</div>
+                    <div class="user-email" id="adminEmail">Loading...</div>
+                </div>
+                <div class="user-avatar" id="adminAvatar">A</div>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Dashboard Content -->
+    <main class="dashboard-main">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1 class="welcome-title">Admin Dashboard</h1>
+            <p class="welcome-subtitle">
+                Manage users, monitor course enrollments, and oversee all training activities from your central administrative panel.
+            </p>
+        </section>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="stat-value" id="totalAdmins">0</div>
+                <div class="stat-label">Total Admins</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">Active Courses</div>
+            </div>
+        </div>
+        
+        <!-- Users Section -->
+        <section class="users-section">
+            <div class="section-header">
+                <h2 class="section-title">Registered Users</h2>
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="Search users..."
+                        oninput="filterUsers()"
+                    />
+                </div>
+            </div>
+            
+            <div class="users-table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>College</th>
+                            <th>User Type</th>
+                            <th>Joined Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6">
+                                <div class="loading-container">
+                                    <div class="loading-spinner"></div>
+                                    <p style="margin-top: 1rem; color: var(--concrete-gray);">Loading users...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        let allUsers = [];
+        
+        // Check authentication and load user data
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in as admin
+            const currentUser = sessionStorage.getItem('currentUser');
+            
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const userData = JSON.parse(currentUser);
+            
+            // Check if user is admin
+            if (userData.userType !== 'admin') {
+                alert('Access denied. Admin privileges required.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Display admin information
+            document.getElementById('adminName').textContent = userData.name;
+            document.getElementById('adminEmail').textContent = userData.email;
+            
+            // Set avatar initial
+            const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('adminAvatar').textContent = initials;
+            
+            // Load all users
+            await loadUsers();
+        });
+        
+        // Load users from Firestore
+        async function loadUsers() {
+            try {
+                const usersSnapshot = await firebaseDb.collection('users').get();
+                allUsers = [];
+                
+                usersSnapshot.forEach(doc => {
+                    allUsers.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Update statistics
+                const students = allUsers.filter(u => u.userType === 'user');
+                const admins = allUsers.filter(u => u.userType === 'admin');
+                
+                document.getElementById('totalUsers').textContent = students.length;
+                document.getElementById('totalAdmins').textContent = admins.length;
+                
+                // Display users in table
+                displayUsers(allUsers);
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="no-users">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <p>Error loading users. Please refresh the page.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Display users in table
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="no-users">
+                                <i class="fas fa-users"></i>
+                                <p>No users found.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => {
+                const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                const joinDate = user.createdAt ? new Date(user.createdAt.toDate()).toLocaleDateString() : 'N/A';
+                const badgeClass = user.userType === 'admin' ? 'badge-admin' : 'badge-user';
+                const badgeText = user.userType === 'admin' ? 'Admin' : 'Student';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="user-name-cell">
+                                <div class="user-initial">${initial}</div>
+                                <span style="font-weight: 600; color: var(--primary-blue);">${user.name || 'N/A'}</span>
+                            </div>
+                        </td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.phone || 'N/A'}</td>
+                        <td>${user.college || '-'}</td>
+                        <td>
+                            <span class="user-type-badge ${badgeClass}">
+                                ${badgeText}
+                            </span>
+                        </td>
+                        <td>${joinDate}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Filter users based on search
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredUsers = allUsers.filter(user => {
+                return (
+                    (user.name && user.name.toLowerCase().includes(searchTerm)) ||
+                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                    (user.phone && user.phone.includes(searchTerm)) ||
+                    (user.college && user.college.toLowerCase().includes(searchTerm))
+                );
+            });
+            
+            displayUsers(filteredUsers);
+        }
+        
+        // Logout handler
+        async function handleLogout() {
+            try {
+                await firebaseAuth.signOut();
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Error logging out. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
