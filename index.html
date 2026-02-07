@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex CAD Solutions - Professional CAD & Civil Survey Training</title>
+    <title>Apex CAD and Survey Solutions - Professional CAD & Civil Survey Training</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,6 +15,11 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
     <style>
         * {
@@ -311,11 +316,90 @@
             box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
         }
         
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 2rem;
+        }
+        
         .logo-container {
             display: flex;
             align-items: center;
             justify-content: flex-start;
             gap: 1.25rem;
+        }
+        
+        /* Director Section - Top Right */
+        .director-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(124, 58, 237, 0.08) 50%, rgba(6, 182, 212, 0.06) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(79, 70, 229, 0.15);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: directorFadeIn 0.8s ease-out both;
+        }
+        
+        .director-section:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(79, 70, 229, 0.2);
+            border-color: rgba(79, 70, 229, 0.25);
+        }
+        
+        @keyframes directorFadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .director-icon {
+            width: 56px;
+            height: 56px;
+            min-width: 56px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .director-section:hover .director-icon {
+            transform: rotate(5deg) scale(1.1);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        }
+        
+        .director-info {
+            text-align: right;
+        }
+        
+        .director-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.3px;
+            transition: color 0.3s ease;
+        }
+        
+        .director-section:hover .director-name {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .director-qualification {
+            font-size: 0.85rem;
+            color: var(--concrete-gray);
+            font-weight: 500;
+            line-height: 1.4;
         }
         
         .logo-img {
@@ -487,10 +571,12 @@
         .course-card:nth-child(2) { animation-delay: 0.2s; }
         .course-card:nth-child(3) { animation-delay: 0.3s; }
         .course-card:nth-child(4) { animation-delay: 0.4s; }
+        .course-card:nth-child(5) { animation-delay: 0.5s; }
         
         .course-card:hover {
             transform: translateY(-12px) scale(1.02);
             box-shadow: 0 25px 70px rgba(79, 70, 229, 0.2);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .course-image-container {
@@ -512,6 +598,7 @@
         .course-card:hover .course-image {
             transform: scale(1.15) rotate(2deg);
             filter: brightness(1);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
         }
         
         .course-content {
@@ -643,6 +730,56 @@
             box-shadow: 0 30px 80px rgba(79, 70, 229, 0.25);
         }
         
+        .certificate-verify-wrapper {
+            grid-column: 1 / -1;
+            margin-top: 1.5rem;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        
+        .btn-udyam-verify {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #0d9488 0%, #06b6d4 50%, var(--primary-blue) 100%);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-udyam-verify::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .btn-udyam-verify:hover::before {
+            left: 100%;
+        }
+        
+        .btn-udyam-verify:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(79, 70, 229, 0.45);
+        }
+        
+        .btn-udyam-verify:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+        
         .certificate-badge {
             position: absolute;
             top: -20px;
@@ -668,6 +805,19 @@
             
             .certificate-image-wrapper {
                 order: -1;
+            }
+            
+            .header-inner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .director-section {
+                justify-content: center;
+            }
+            
+            .director-info {
+                text-align: left;
             }
         }
         
@@ -818,7 +968,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--deep-blue) 0%, #2563eb 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
             transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: -1;
         }
@@ -972,6 +1122,77 @@
             transform: translateY(-50%) scale(1.15) rotate(5deg);
         }
         
+        /* User Type Toggle */
+        .user-type-toggle {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+        
+        .toggle-option {
+            flex: 1;
+            max-width: 200px;
+            padding: 1rem 1.5rem;
+            background: white;
+            border: 2.5px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .toggle-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+        
+        .toggle-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-option.active {
+            border-color: var(--primary-blue);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+        
+        .toggle-option.active::before {
+            opacity: 1;
+        }
+        
+        .toggle-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .toggle-label {
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .toggle-option.active .toggle-icon,
+        .toggle-option.active .toggle-label {
+            color: white;
+        }
+        
         .theme-images {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -1097,6 +1318,63 @@
             transform: translateY(-2px) scale(1);
         }
         
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            animation: slideDown 0.4s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            color: #059669;
+        }
+        
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            color: #dc2626;
+        }
+        
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -1107,6 +1385,21 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* Enhanced transitions */
+        .course-card,
+        .btn-primary,
+        .btn-secondary,
+        .auth-tab,
+        .certificate-image,
+        .director-section {
+            will-change: transform;
+        }
+        
+        .course-card:active {
+            transform: translateY(-6px) scale(1.01);
+            transition-duration: 0.2s;
         }
         
         /* Responsive Design */
@@ -1124,7 +1417,6 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
-            
             
             .course-card {
                 padding: 2rem;
@@ -1185,6 +1477,15 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
                 padding: 1.5rem;
+            }
+            
+            .user-type-toggle {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .toggle-option {
+                max-width: 100%;
             }
         }
         
@@ -1315,11 +1616,22 @@
         </div>
     </div>
     
-    <!-- Header with Logo -->
+    <!-- Header with Logo and Director -->
     <header class="header">
-        <div class="logo-container">
-            <img src="logo.jpg.jpeg" alt="Apex CAD Solutions Logo" class="logo-img">
-            <span class="logo-text">Apex CAD Solutions</span>
+        <div class="header-inner">
+            <div class="logo-container">
+                <img src="logo.jpg.jpeg" alt="Apex CAD and Survey Solutions Logo" class="logo-img">
+                <span class="logo-text">Apex CAD and Survey Solutions</span>
+            </div>
+            <div class="director-section">
+                <div class="director-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="director-info">
+                    <div class="director-name">M. Venkata Krishna</div>
+                    <div class="director-qualification">M.Tech, PhD Structural Engineering</div>
+                </div>
+            </div>
         </div>
     </header>
     
@@ -1361,47 +1673,26 @@
                                 <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
                             </linearGradient>
                         </defs>
-                        <!-- CAD Drawing Background -->
                         <rect width="400" height="300" fill="url(#grad1)"/>
-                        <!-- Grid Lines -->
                         <g stroke="rgba(255,255,255,0.2)" stroke-width="1">
-                            <line x1="0" y1="50" x2="400" y2="50"/>
-                            <line x1="0" y1="100" x2="400" y2="100"/>
-                            <line x1="0" y1="150" x2="400" y2="150"/>
-                            <line x1="0" y1="200" x2="400" y2="200"/>
-                            <line x1="0" y1="250" x2="400" y2="250"/>
-                            <line x1="50" y1="0" x2="50" y2="300"/>
-                            <line x1="100" y1="0" x2="100" y2="300"/>
-                            <line x1="150" y1="0" x2="150" y2="300"/>
-                            <line x1="200" y1="0" x2="200" y2="300"/>
-                            <line x1="250" y1="0" x2="250" y2="300"/>
-                            <line x1="300" y1="0" x2="300" y2="300"/>
-                            <line x1="350" y1="0" x2="350" y2="300"/>
+                            <line x1="0" y1="50" x2="400" y2="50"/><line x1="0" y1="100" x2="400" y2="100"/><line x1="0" y1="150" x2="400" y2="150"/><line x1="0" y1="200" x2="400" y2="200"/><line x1="50" y1="0" x2="50" y2="300"/><line x1="200" y1="0" x2="200" y2="300"/><line x1="350" y1="0" x2="350" y2="300"/>
                         </g>
-                        <!-- CAD Drawing Elements -->
                         <rect x="100" y="100" width="200" height="100" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
                         <circle cx="200" cy="150" r="30" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
-                        <line x1="150" y1="120" x2="250" y2="180" stroke="white" stroke-width="2" opacity="0.7"/>
-                        <!-- Dimension Lines -->
                         <line x1="100" y1="220" x2="300" y2="220" stroke="white" stroke-width="2" opacity="0.6"/>
-                        <line x1="100" y1="215" x2="100" y2="225" stroke="white" stroke-width="2" opacity="0.6"/>
-                        <line x1="300" y1="215" x2="300" y2="225" stroke="white" stroke-width="2" opacity="0.6"/>
-                        <text x="200" y="235" fill="white" font-size="16" text-anchor="middle" opacity="0.8">200mm</text>
+                        <text x="200" y="235" fill="white" font-size="16" text-anchor="middle" opacity="0.8">2D</text>
                     </svg>
-                    <div class="course-icon">
-                        <i class="fas fa-drafting-compass"></i>
-                    </div>
+                    <div class="course-icon"><i class="fas fa-drafting-compass"></i></div>
                 </div>
                 <div class="course-content">
-                    <h3 class="course-title">AutoCAD Fundamentals</h3>
+                    <h3 class="course-title">AutoCAD</h3>
                     <p class="course-description">
-                        Master the basics of AutoCAD software, including 2D drafting, dimensioning, and technical drawing. Perfect for beginners starting their CAD journey.
+                        Master 2D drafting, dimensioning, and technical drawing with industry-standard AutoCAD. Essential for civil and architectural design.
                     </p>
                     <ul class="course-features">
                         <li>2D Drafting & Design</li>
                         <li>Technical Drawing Standards</li>
-                        <li>Layer Management</li>
-                        <li>Dimensioning & Annotations</li>
+                        <li>Layer & Dimension Management</li>
                         <li>Industry Certification</li>
                     </ul>
                 </div>
@@ -1418,38 +1709,29 @@
                             </linearGradient>
                         </defs>
                         <rect width="400" height="300" fill="url(#grad2)"/>
-                        <!-- 3D Building Structure -->
-                        <g transform="translate(200,150)">
-                            <!-- Front Face -->
-                            <rect x="-80" y="-60" width="160" height="120" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="2"/>
-                            <!-- Top Face -->
-                            <polygon points="-80,-60 0,-120 80,-60" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
-                            <!-- Side Face -->
-                            <polygon points="80,-60 80,60 0,0 0,-120" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
-                            <!-- Windows -->
-                            <rect x="-60" y="-40" width="30" height="30" fill="rgba(6,182,212,0.6)" stroke="white" stroke-width="1"/>
-                            <rect x="-20" y="-40" width="30" height="30" fill="rgba(6,182,212,0.6)" stroke="white" stroke-width="1"/>
-                            <rect x="20" y="-40" width="30" height="30" fill="rgba(6,182,212,0.6)" stroke="white" stroke-width="1"/>
-                            <rect x="-60" y="0" width="30" height="30" fill="rgba(6,182,212,0.6)" stroke="white" stroke-width="1"/>
-                            <rect x="-20" y="0" width="30" height="30" fill="rgba(6,182,212,0.6)" stroke="white" stroke-width="1"/>
-                            <rect x="20" y="0" width="30" height="30" fill="rgba(6,182,212,0.6)" stroke="white" stroke-width="1"/>
+                        <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
+                            <line x1="50" y1="250" x2="350" y2="250"/>
+                            <line x1="100" y1="250" x2="100" y2="100"/>
+                            <line x1="200" y1="250" x2="200" y2="80"/>
+                            <line x1="300" y1="250" x2="300" y2="100"/>
+                            <line x1="100" y1="100" x2="200" y2="80"/>
+                            <line x1="200" y1="80" x2="300" y2="100"/>
+                            <line x1="100" y1="150" x2="300" y2="150"/>
+                            <circle cx="200" cy="80" r="8" fill="rgba(6,182,212,0.8)"/>
                         </g>
                     </svg>
-                    <div class="course-icon">
-                        <i class="fas fa-cube"></i>
-                    </div>
+                    <div class="course-icon"><i class="fas fa-building"></i></div>
                 </div>
                 <div class="course-content">
-                    <h3 class="course-title">3D Modeling & Rendering</h3>
+                    <h3 class="course-title">ETABS</h3>
                     <p class="course-description">
-                        Advanced 3D modeling techniques, rendering, and visualization. Create realistic architectural and engineering models with professional quality.
+                        Learn building analysis and design with ETABS. Structural modeling, analysis, and design for high-rise and complex structures.
                     </p>
                     <ul class="course-features">
-                        <li>3D Modeling Techniques</li>
-                        <li>Material & Texture Mapping</li>
-                        <li>Lighting & Rendering</li>
-                        <li>Animation Basics</li>
-                        <li>Portfolio Development</li>
+                        <li>Structural Analysis</li>
+                        <li>Building Modeling</li>
+                        <li>Load & Design Codes</li>
+                        <li>Industry Certification</li>
                     </ul>
                 </div>
             </div>
@@ -1465,49 +1747,28 @@
                             </linearGradient>
                         </defs>
                         <rect width="400" height="300" fill="url(#grad3)"/>
-                        <!-- Survey Equipment -->
-                        <g transform="translate(200,150)">
-                            <!-- Tripod Base -->
-                            <line x1="-30" y1="40" x2="0" y2="60" stroke="white" stroke-width="3" opacity="0.8"/>
-                            <line x1="30" y1="40" x2="0" y2="60" stroke="white" stroke-width="3" opacity="0.8"/>
-                            <line x1="0" y1="20" x2="0" y2="60" stroke="white" stroke-width="3" opacity="0.8"/>
-                            <!-- Transit/Theodolite -->
-                            <circle cx="0" cy="0" r="35" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
-                            <circle cx="0" cy="0" r="25" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2" opacity="0.7"/>
-                            <line x1="-35" y1="0" x2="35" y2="0" stroke="white" stroke-width="2" opacity="0.8"/>
-                            <line x1="0" y1="-35" x2="0" y2="35" stroke="white" stroke-width="2" opacity="0.8"/>
-                            <!-- Crosshair -->
-                            <line x1="-10" y1="0" x2="10" y2="0" stroke="white" stroke-width="2"/>
-                            <line x1="0" y1="-10" x2="0" y2="10" stroke="white" stroke-width="2"/>
-                        </g>
-                        <!-- Map Grid -->
-                        <g stroke="rgba(255,255,255,0.3)" stroke-width="1" opacity="0.5">
-                            <line x1="50" y1="50" x2="350" y2="50"/>
-                            <line x1="50" y1="100" x2="350" y2="100"/>
-                            <line x1="50" y1="150" x2="350" y2="150"/>
-                            <line x1="50" y1="200" x2="350" y2="200"/>
-                            <line x1="50" y1="250" x2="350" y2="250"/>
-                            <line x1="50" y1="50" x2="50" y2="250"/>
-                            <line x1="150" y1="50" x2="150" y2="250"/>
-                            <line x1="250" y1="50" x2="250" y2="250"/>
-                            <line x1="350" y1="50" x2="350" y2="250"/>
+                        <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
+                            <line x1="80" y1="220" x2="320" y2="220"/>
+                            <line x1="120" y1="220" x2="120" y2="100"/>
+                            <line x1="200" y1="220" x2="200" y2="70"/>
+                            <line x1="280" y1="220" x2="280" y2="100"/>
+                            <line x1="120" y1="100" x2="200" y2="70"/>
+                            <line x1="200" y1="70" x2="280" y2="100"/>
+                            <line x1="120" y1="160" x2="280" y2="160"/>
                         </g>
                     </svg>
-                    <div class="course-icon">
-                        <i class="fas fa-map-marked-alt"></i>
-                    </div>
+                    <div class="course-icon"><i class="fas fa-cubes"></i></div>
                 </div>
                 <div class="course-content">
-                    <h3 class="course-title">Civil Surveying & Mapping</h3>
+                    <h3 class="course-title">STAAD Pro</h3>
                     <p class="course-description">
-                        Learn land surveying principles, GPS technology, and topographic mapping. Essential skills for civil engineering and construction projects.
+                        Professional structural analysis and design with STAAD.Pro. Steel, concrete, and composite design for civil and industrial projects.
                     </p>
                     <ul class="course-features">
-                        <li>Land Surveying Basics</li>
-                        <li>GPS & GIS Technology</li>
-                        <li>Topographic Mapping</li>
-                        <li>Site Planning</li>
-                        <li>Field Work Training</li>
+                        <li>Structural Analysis</li>
+                        <li>Steel & Concrete Design</li>
+                        <li>Code Compliance</li>
+                        <li>Industry Certification</li>
                     </ul>
                 </div>
             </div>
@@ -1523,41 +1784,68 @@
                             </linearGradient>
                         </defs>
                         <rect width="400" height="300" fill="url(#grad4)"/>
-                        <!-- Structural Framework -->
-                        <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
-                            <!-- Base -->
-                            <line x1="50" y1="250" x2="350" y2="250"/>
-                            <!-- Columns -->
-                            <line x1="100" y1="250" x2="100" y2="100"/>
-                            <line x1="200" y1="250" x2="200" y2="80"/>
-                            <line x1="300" y1="250" x2="300" y2="100"/>
-                            <!-- Beams -->
-                            <line x1="100" y1="100" x2="200" y2="80"/>
-                            <line x1="200" y1="80" x2="300" y2="100"/>
-                            <line x1="100" y1="150" x2="300" y2="150"/>
-                            <!-- Cross Bracing -->
-                            <line x1="100" y1="250" x2="200" y2="150" stroke-width="2" opacity="0.6"/>
-                            <line x1="300" y1="250" x2="200" y2="150" stroke-width="2" opacity="0.6"/>
-                            <!-- Load Indicators -->
-                            <circle cx="200" cy="80" r="8" fill="rgba(6,182,212,0.8)"/>
-                            <text x="200" y="65" fill="white" font-size="14" text-anchor="middle" opacity="0.8">Load</text>
+                        <g transform="translate(200,150)">
+                            <rect x="-80" y="-60" width="160" height="120" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="2"/>
+                            <polygon points="-80,-60 0,-120 80,-60" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
+                            <polygon points="80,-60 80,60 0,0 0,-120" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
+                            <rect x="-60" y="-40" width="30" height="30" fill="rgba(6,182,212,0.6)"/>
+                            <rect x="-20" y="-40" width="30" height="30" fill="rgba(6,182,212,0.6)"/>
+                            <rect x="20" y="-40" width="30" height="30" fill="rgba(6,182,212,0.6)"/>
                         </g>
                     </svg>
-                    <div class="course-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
+                    <div class="course-icon"><i class="fas fa-cube"></i></div>
                 </div>
                 <div class="course-content">
-                    <h3 class="course-title">Structural Design & Analysis</h3>
+                    <h3 class="course-title">Revit Architecture</h3>
                     <p class="course-description">
-                        Comprehensive course on structural engineering principles, load calculations, and building design using CAD software and analysis tools.
+                        BIM-based architectural design with Revit. Create detailed 3D models, documentation, and coordinated designs for buildings.
                     </p>
                     <ul class="course-features">
-                        <li>Structural Analysis</li>
-                        <li>Load Calculations</li>
-                        <li>Building Codes & Standards</li>
-                        <li>Reinforcement Design</li>
-                        <li>Project-Based Learning</li>
+                        <li>BIM Workflows</li>
+                        <li>3D Modeling & Documentation</li>
+                        <li>Coordination & Visualization</li>
+                        <li>Industry Certification</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="course-card" onclick="scrollToAuth('signup')">
+                <div class="course-image-container">
+                    <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="400" height="300" fill="url(#grad5)"/>
+                        <g transform="translate(200,150)">
+                            <line x1="-30" y1="40" x2="0" y2="60" stroke="white" stroke-width="3" opacity="0.8"/>
+                            <line x1="30" y1="40" x2="0" y2="60" stroke="white" stroke-width="3" opacity="0.8"/>
+                            <line x1="0" y1="20" x2="0" y2="60" stroke="white" stroke-width="3" opacity="0.8"/>
+                            <circle cx="0" cy="0" r="35" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
+                            <circle cx="0" cy="0" r="25" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
+                            <line x1="-35" y1="0" x2="35" y2="0" stroke="white" stroke-width="2"/>
+                            <line x1="0" y1="-35" x2="0" y2="35" stroke="white" stroke-width="2"/>
+                        </g>
+                        <g stroke="rgba(255,255,255,0.3)" stroke-width="1" opacity="0.5">
+                            <line x1="50" y1="50" x2="350" y2="50"/><line x1="50" y1="150" x2="350" y2="150"/><line x1="50" y1="250" x2="350" y2="250"/>
+                            <line x1="50" y1="50" x2="50" y2="250"/><line x1="200" y1="50" x2="200" y2="250"/><line x1="350" y1="50" x2="350" y2="250"/>
+                        </g>
+                    </svg>
+                    <div class="course-icon"><i class="fas fa-map-marked-alt"></i></div>
+                </div>
+                <div class="course-content">
+                    <h3 class="course-title">Total Station</h3>
+                    <p class="course-description">
+                        Land surveying with Total Station. Field measurements, topographic surveys, and construction layout for civil projects.
+                    </p>
+                    <ul class="course-features">
+                        <li>Field Survey & Measurements</li>
+                        <li>Topographic Mapping</li>
+                        <li>Construction Layout</li>
+                        <li>Industry Certification</li>
                     </ul>
                 </div>
             </div>
@@ -1580,10 +1868,16 @@
                 </p>
             </div>
             <div class="certificate-image-wrapper">
-                <img src="Certificate .jpeg" alt="ISO 9001:2015 Quality Management System Certificate - Apex CAD Solutions" class="certificate-image">
+                <img src="Certificate .jpeg" alt="ISO 9001:2015 Quality Management System Certificate - Apex CAD and Survey Solutions" class="certificate-image">
                 <div class="certificate-badge">
                     <i class="fas fa-certificate"></i>
                 </div>
+            </div>
+            <div class="certificate-verify-wrapper">
+                <a href="https://udyamregistration.gov.in/verifyudyambarcode.aspx?verifyudrn=x1X79UXQvCHeS54dZfotNQY6fQt3Pjr9Ylde4hkYau8=" target="_blank" rel="noopener noreferrer" class="btn-udyam-verify">
+                    <i class="fas fa-external-link-alt"></i>
+                    Verify Udyam Registration (Govt. of India)
+                </a>
             </div>
         </div>
     </section>
@@ -1603,6 +1897,20 @@
                 <form class="auth-form active" id="signInForm">
                     <h2 class="form-title">Welcome Back</h2>
                     <p class="form-subtitle">Sign in to access your training portal</p>
+                    
+                    <div id="signin-alert"></div>
+                    
+                    <!-- User Type Toggle -->
+                    <div class="user-type-toggle">
+                        <div class="toggle-option active" data-type="user" onclick="selectUserType('signin', 'user')">
+                            <div class="toggle-icon"><i class="fas fa-user"></i></div>
+                            <div class="toggle-label">Student</div>
+                        </div>
+                        <div class="toggle-option" data-type="admin" onclick="selectUserType('signin', 'admin')">
+                            <div class="toggle-icon"><i class="fas fa-user-shield"></i></div>
+                            <div class="toggle-label">Admin</div>
+                        </div>
+                    </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="signin-email">Email</label>
@@ -1635,7 +1943,7 @@
                         </div>
                     </div>
                     
-                    <button type="submit" class="submit-btn">
+                    <button type="submit" class="submit-btn" id="signin-btn">
                         <i class="fas fa-sign-in-alt mr-2"></i>Sign In
                     </button>
                 </form>
@@ -1644,6 +1952,20 @@
                 <form class="auth-form" id="signUpForm">
                     <h2 class="form-title">Create Your Account</h2>
                     <p class="form-subtitle">Join thousands of professionals advancing their careers</p>
+                    
+                    <div id="signup-alert"></div>
+                    
+                    <!-- User Type Toggle -->
+                    <div class="user-type-toggle">
+                        <div class="toggle-option active" data-type="user" onclick="selectUserType('signup', 'user')">
+                            <div class="toggle-icon"><i class="fas fa-user"></i></div>
+                            <div class="toggle-label">Student</div>
+                        </div>
+                        <div class="toggle-option" data-type="admin" onclick="selectUserType('signup', 'admin')">
+                            <div class="toggle-icon"><i class="fas fa-user-shield"></i></div>
+                            <div class="toggle-label">Admin</div>
+                        </div>
+                    </div>
                     
                     <div class="form-grid">
                         <div class="form-group">
@@ -1690,6 +2012,21 @@
                             </div>
                         </div>
                         
+                        <div class="form-group" id="college-field">
+                            <label class="form-label" for="signup-college">College Name</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="signup-college" 
+                                    class="form-input" 
+                                    placeholder="Enter your college name"
+                                />
+                                <i class="fas fa-university input-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label" for="signup-password">Password</label>
                             <div class="input-wrapper">
@@ -1702,6 +2039,23 @@
                                 />
                                 <i class="fas fa-lock input-icon"></i>
                                 <span class="password-toggle" onclick="togglePassword('signup-password', this)">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="signup-confirm-password">Confirm Password</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="signup-confirm-password" 
+                                    class="form-input" 
+                                    placeholder="Confirm your password"
+                                    required
+                                />
+                                <i class="fas fa-lock input-icon"></i>
+                                <span class="password-toggle" onclick="togglePassword('signup-confirm-password', this)">
                                     <i class="fas fa-eye"></i>
                                 </span>
                             </div>
@@ -1730,7 +2084,7 @@
                         </div>
                     </div>
                     
-                    <button type="submit" class="submit-btn">
+                    <button type="submit" class="submit-btn" id="signup-btn">
                         <i class="fas fa-user-plus mr-2"></i>Create Account
                     </button>
                 </form>
@@ -1738,131 +2092,9 @@
         </div>
     </section>
     
-    <!-- JavaScript -->
-    <script>
-        // Smooth scroll to authentication section
-        function scrollToAuth(formType) {
-            const authSection = document.getElementById('authSection');
-            const offset = 100; // Offset for fixed header
-            
-            // Calculate position
-            const elementPosition = authSection.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
-            
-            // Smooth scroll
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-            
-            // Switch to appropriate form after scroll
-            setTimeout(() => {
-                if (formType === 'signup') {
-                    switchAuthTab('signup');
-                } else {
-                    switchAuthTab('signin');
-                }
-            }, 500);
-        }
-        
-        // Switch between Sign In and Sign Up tabs
-        function switchAuthTab(tab) {
-            // Update tabs
-            const tabs = document.querySelectorAll('.auth-tab');
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'signin') {
-                tabs[0].classList.add('active');
-            } else {
-                tabs[1].classList.add('active');
-            }
-            
-            // Update forms
-            const signInForm = document.getElementById('signInForm');
-            const signUpForm = document.getElementById('signUpForm');
-            
-            if (tab === 'signin') {
-                signInForm.classList.add('active');
-                signUpForm.classList.remove('active');
-            } else {
-                signInForm.classList.remove('active');
-                signUpForm.classList.add('active');
-            }
-        }
-        
-        // Toggle password visibility
-        function togglePassword(inputId, toggleElement) {
-            const input = document.getElementById(inputId);
-            const icon = toggleElement.querySelector('i');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-        
-        // Form submission handlers
-        document.getElementById('signInForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('signin-email').value;
-            const password = document.getElementById('signin-password').value;
-            
-            console.log('Sign In:', { email, password });
-            
-            // TODO: Integrate with backend API
-            alert('Sign In functionality ready for backend integration!\n\nEmail: ' + email);
-        });
-        
-        document.getElementById('signUpForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = {
-                name: document.getElementById('signup-name').value,
-                phone: document.getElementById('signup-phone').value,
-                email: document.getElementById('signup-email').value,
-                password: document.getElementById('signup-password').value
-            };
-            
-            console.log('Sign Up:', formData);
-            
-            // TODO: Integrate with backend API
-            alert('Sign Up functionality ready for backend integration!\n\nName: ' + formData.name);
-        });
-        
-        // Add scroll-triggered animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'slideUpFade 0.8s ease-out';
-                }
-            });
-        }, observerOptions);
-        
-        // Observe auth section
-        const authCard = document.querySelector('.auth-card');
-        if (authCard) observer.observe(authCard);
-        
-        // Observe course cards
-        const courseCards = document.querySelectorAll('.course-card');
-        courseCards.forEach(card => observer.observe(card));
-        
-        // Observe certificate section
-        const certificateSection = document.querySelector('.certificate-section');
-        if (certificateSection) {
-            const certificateElements = certificateSection.querySelectorAll('.certificate-content, .certificate-image-wrapper');
-            certificateElements.forEach(element => observer.observe(element));
-        }
-        
-    </script>
+    <!-- Firebase Configuration and JavaScript -->
+    <script type="module" src="./firebase-config.js"></script>
+    <script type="module" src="./auth.js"></script>
     
 </body>
 </html>
