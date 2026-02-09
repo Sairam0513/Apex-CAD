@@ -16,11 +16,6 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -589,7 +584,7 @@
                     <div class="user-email" id="adminEmail">Loading...</div>
                 </div>
                 <div class="user-avatar" id="adminAvatar">A</div>
-                <button class="logout-btn" onclick="handleLogout()">
+                <button class="logout-btn" onclick="window.handleLogout()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
             </div>
@@ -644,7 +639,7 @@
                         class="search-input" 
                         id="searchInput" 
                         placeholder="Search users..."
-                        oninput="filterUsers()"
+                        oninput="window.filterUsers()"
                     />
                 </div>
             </div>
@@ -676,55 +671,96 @@
         </section>
     </main>
     
-    <!-- Firebase Configuration -->
-    <script src="firebase-config.js"></script>
-    
-    <script>
+    <!-- Firebase v10 Modular SDK -->
+    <script type="module">
+        // CRITICAL: Firebase v10 Modular Imports
+        import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBy18nqqaq3nsaFkv3E7hmyJhQOv6gGg_g",
+            authDomain: "apex-cad-solutions.firebaseapp.com",
+            projectId: "apex-cad-solutions",
+            storageBucket: "apex-cad-solutions.firebasestorage.app",
+            messagingSenderId: "701417388296",
+            appId: "1:701417388296:web:6173bd62d6cfa4014ad4bd"
+        };
+
+        // TASK 2: Initialize Firebase (SINGLETON PATTERN)
+        let app;
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+            console.log('✅ Firebase initialized');
+        } else {
+            app = getApp();
+            console.log('✅ Firebase already initialized');
+        }
+
+        // Initialize Auth and Firestore with SAME app instance
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Store all users for filtering
         let allUsers = [];
-        
+
         // Check authentication and load user data
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Check if user is logged in as admin
-            const currentUser = sessionStorage.getItem('currentUser');
-            
-            if (!currentUser) {
-                window.location.href = 'index.html';
-                return;
+        async function initDashboard() {
+            try {
+                // Check session
+                const currentUser = sessionStorage.getItem('currentUser');
+                
+                if (!currentUser) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                const userData = JSON.parse(currentUser);
+                
+                // Verify admin access
+                if (userData.userType !== 'admin') {
+                    alert('Access denied. Admin privileges required.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Display admin info
+                document.getElementById('adminName').textContent = userData.name;
+                document.getElementById('adminEmail').textContent = userData.email;
+                
+                const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                document.getElementById('adminAvatar').textContent = initials;
+                
+                // TASK 3: Load users from Firestore
+                await loadUsers();
+                
+            } catch (error) {
+                console.error('❌ Dashboard initialization error:', error);
+                alert('Error loading dashboard: ' + error.message);
             }
-            
-            const userData = JSON.parse(currentUser);
-            
-            // Check if user is admin
-            if (userData.userType !== 'admin') {
-                alert('Access denied. Admin privileges required.');
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            // Display admin information
-            document.getElementById('adminName').textContent = userData.name;
-            document.getElementById('adminEmail').textContent = userData.email;
-            
-            // Set avatar initial
-            const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            document.getElementById('adminAvatar').textContent = initials;
-            
-            // Load all users
-            await loadUsers();
-        });
-        
-        // Load users from Firestore
+        }
+
+        // TASK 3: Retrieve all registered users from Firestore
         async function loadUsers() {
             try {
-                const usersSnapshot = await firebaseDb.collection('users').get();
-                allUsers = [];
+                console.log('📥 Fetching users from Firestore...');
                 
-                usersSnapshot.forEach(doc => {
+                // Get users collection reference
+                const usersCollection = collection(db, 'users');
+                
+                // Get all documents
+                const querySnapshot = await getDocs(usersCollection);
+                
+                allUsers = [];
+                querySnapshot.forEach((doc) => {
                     allUsers.push({
                         id: doc.id,
                         ...doc.data()
                     });
                 });
+                
+                console.log(`✅ Loaded ${allUsers.length} users`);
                 
                 // Update statistics
                 const students = allUsers.filter(u => u.userType === 'user');
@@ -733,24 +769,27 @@
                 document.getElementById('totalUsers').textContent = students.length;
                 document.getElementById('totalAdmins').textContent = admins.length;
                 
-                // Display users in table
+                // Display users
                 displayUsers(allUsers);
                 
             } catch (error) {
-                console.error('Error loading users:', error);
+                console.error('❌ Error loading users:', error);
                 document.getElementById('usersTableBody').innerHTML = `
                     <tr>
                         <td colspan="6">
                             <div class="no-users">
                                 <i class="fas fa-exclamation-circle"></i>
-                                <p>Error loading users. Please refresh the page.</p>
+                                <p>Error loading users: ${error.message}</p>
+                                <p style="margin-top: 1rem; font-size: 0.9rem;">
+                                    Check Firestore rules or console for details
+                                </p>
                             </div>
                         </td>
                     </tr>
                 `;
             }
         }
-        
+
         // Display users in table
         function displayUsers(users) {
             const tbody = document.getElementById('usersTableBody');
@@ -761,7 +800,7 @@
                         <td colspan="6">
                             <div class="no-users">
                                 <i class="fas fa-users"></i>
-                                <p>No users found.</p>
+                                <p>No users registered yet.</p>
                             </div>
                         </td>
                     </tr>
@@ -796,9 +835,34 @@
                 `;
             }).join('');
         }
-        
-        // Filter users based on search
-        function filterUsers() {
+
+        // TASK 1: Fix logout - expose via window
+        window.handleLogout = async function() {
+            try {
+                console.log('🚪 Logging out...');
+                
+                // Sign out from Firebase
+                await signOut(auth);
+                
+                // Clear session
+                sessionStorage.removeItem('currentUser');
+                
+                console.log('✅ Logout successful');
+                
+                // Redirect to index
+                window.location.href = 'index.html';
+                
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                
+                // Force logout even if Firebase fails
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Expose filter function via window
+        window.filterUsers = function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             
             const filteredUsers = allUsers.filter(user => {
@@ -811,19 +875,10 @@
             });
             
             displayUsers(filteredUsers);
-        }
-        
-        // Logout handler
-        async function handleLogout() {
-            try {
-                await firebaseAuth.signOut();
-                sessionStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Error logging out. Please try again.');
-            }
-        }
+        };
+
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', initDashboard);
     </script>
 </body>
 </html>
