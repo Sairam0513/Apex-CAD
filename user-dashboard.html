@@ -736,98 +736,124 @@
         </section>
     </main>
     
-    <!-- Firebase v10 Modular SDK -->
-    <script type="module">
-        // CRITICAL: Firebase v10 Modular Imports
-        import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+ <!-- Firebase v10 Modular SDK (SINGLE FILE, GITHUB-PAGES SAFE) -->
+<script type="module">
+  // ===============================
+  // FIREBASE v10 IMPORTS
+  // ===============================
+  import {
+    initializeApp,
+    getApps,
+    getApp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBy18nqqaq3nsaFkv3E7hmyJhQOv6gGg_g",
-            authDomain: "apex-cad-solutions.firebaseapp.com",
-            projectId: "apex-cad-solutions",
-            storageBucket: "apex-cad-solutions.firebasestorage.app",
-            messagingSenderId: "701417388296",
-            appId: "1:701417388296:web:6173bd62d6cfa4014ad4bd"
-        };
+  import {
+    getAuth,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Initialize Firebase (SINGLETON PATTERN)
-        let app;
-        if (!getApps().length) {
-            app = initializeApp(firebaseConfig);
-            console.log('✅ Firebase initialized');
-        } else {
-            app = getApp();
-            console.log('✅ Firebase already initialized');
-        }
+  // ===============================
+  // FIREBASE CONFIG
+  // ===============================
+  const firebaseConfig = {
+    apiKey: "AIzaSyBy18nqqaq3nsaFkv3E7hmyJhQOv6gGg_g",
+    authDomain: "apex-cad-solutions.firebaseapp.com",
+    projectId: "apex-cad-solutions",
+    storageBucket: "apex-cad-solutions.firebasestorage.app",
+    messagingSenderId: "701417388296",
+    appId: "1:701417388296:web:6173bd62d6cfa4014ad4bd"
+  };
 
-        // Initialize Auth with SAME app instance
-        const auth = getAuth(app);
+  // ===============================
+  // INITIALIZE FIREBASE (SINGLETON)
+  // ===============================
+  const app = getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig);
 
-        // Initialize dashboard
-        async function initDashboard() {
-            try {
-                // Check session
-                const currentUser = sessionStorage.getItem('currentUser');
-                
-                if (!currentUser) {
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                const userData = JSON.parse(currentUser);
-                
-                // Display user info
-                document.getElementById('userName').textContent = userData.name;
-                document.getElementById('userEmail').textContent = userData.email;
-                
-                const initials = userData.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                document.getElementById('userAvatar').textContent = initials;
-                
-                console.log('✅ Dashboard loaded for:', userData.name);
-                
-            } catch (error) {
-                console.error('❌ Dashboard initialization error:', error);
-                alert('Error loading dashboard: ' + error.message);
-            }
-        }
+  const auth = getAuth(app);
 
-        // FIXED LOGOUT - expose via window
-        window.handleLogout = async function() {
-            try {
-                console.log('🚪 Logging out...');
-                
-                // Sign out from Firebase
-                await signOut(auth);
-                
-                // Clear session
-                sessionStorage.removeItem('currentUser');
-                
-                console.log('✅ Logout successful');
-                
-                // Redirect to index
-                window.location.href = 'index.html';
-                
-            } catch (error) {
-                console.error('❌ Logout error:', error);
-                
-                // Force logout even if Firebase fails
-                sessionStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
-            }
-        };
+  console.log("🔥 Firebase ready (v10 modular)");
 
-        // Enroll in course handler - expose via window
-        window.enrollCourse = function(courseName) {
-            alert(`Enrollment for ${courseName} will be available soon!\n\nThis feature is currently under development. You will be notified when enrollment opens.`);
-            
-            // TODO: Implement course enrollment logic
-            console.log('Course enrollment requested:', courseName);
-        };
+  // ===============================
+  // INIT DASHBOARD
+  // ===============================
+  function initDashboard() {
+    try {
+      const currentUser = sessionStorage.getItem("currentUser");
 
-        // Initialize on DOM ready
-        document.addEventListener('DOMContentLoaded', initDashboard);
-    </script>
+      if (!currentUser) {
+        // ✅ GitHub Pages safe redirect
+        window.location.replace("/apex-cad-solutions/index.html");
+        return;
+      }
+
+      const userData = JSON.parse(currentUser);
+
+      document.getElementById("userName").textContent = userData.name;
+      document.getElementById("userEmail").textContent = userData.email;
+
+      const initials = userData.name
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
+      document.getElementById("userAvatar").textContent = initials;
+
+      console.log("✅ Dashboard loaded for:", userData.email);
+
+    } catch (err) {
+      console.error("❌ Dashboard init error:", err);
+      alert("Failed to load dashboard");
+      window.location.replace("/apex-cad-solutions/index.html");
+    }
+  }
+
+  // ===============================
+  // LOGOUT (FIXED FOR GITHUB PAGES)
+  // ===============================
+  window.handleLogout = async function () {
+    try {
+      console.log("🚪 Logging out…");
+
+      await signOut(auth);
+
+      sessionStorage.clear();
+      localStorage.clear();
+
+      console.log("✅ Logout successful");
+
+      // ✅ ABSOLUTE redirect (CRITICAL)
+      window.location.replace("/apex-cad-solutions/index.html");
+
+    } catch (error) {
+      console.error("❌ Logout error:", error);
+
+      // Force cleanup even if Firebase fails
+      sessionStorage.clear();
+      localStorage.clear();
+
+      window.location.replace("/apex-cad-solutions/index.html");
+    }
+  };
+
+  // ===============================
+  // COURSE ENROLL (PLACEHOLDER)
+  // ===============================
+  window.enrollCourse = function (courseName) {
+    alert(
+      `Enrollment for ${courseName} will be available soon.\n\nYou will be notified when enrollment opens.`
+    );
+    console.log("Course enrollment requested:", courseName);
+  };
+
+  // ===============================
+  // START
+  // ===============================
+  document.addEventListener("DOMContentLoaded", initDashboard);
+</script>
+
 </body>
 </html>
