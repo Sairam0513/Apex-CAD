@@ -17,9 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ============================================================
-           BASE STYLES — UNCHANGED FROM ORIGINAL
-        ============================================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary-blue: #4f46e5; --secondary-purple: #7c3aed;
@@ -62,14 +59,12 @@
         .course-card { background: rgba(255,255,255,.98); backdrop-filter: blur(20px); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.08); transition: all .4s cubic-bezier(.4,0,.2,1); border: 1px solid rgba(255,255,255,.6); position: relative; animation: fadeInUp .8s ease-out both; }
         .course-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg,var(--primary-blue),var(--secondary-purple),var(--accent-cyan)); transform: scaleX(0); transition: transform .4s ease; }
         .course-card:hover::before { transform: scaleX(1); }
-        .course-card:nth-child(1){animation-delay:.3s} .course-card:nth-child(2){animation-delay:.4s} .course-card:nth-child(3){animation-delay:.5s} .course-card:nth-child(4){animation-delay:.6s} .course-card:nth-child(5){animation-delay:.7s}
+        .course-card:nth-child(1){animation-delay:.3s} .course-card:nth-child(2){animation-delay:.4s} .course-card:nth-child(3){animation-delay:.5s}
         .course-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 25px 70px rgba(79,70,229,.2); }
 
-        /* ── FIX 7: course-image-container supports <img> tags ── */
         .course-image-container { width: 100%; height: 220px; position: relative; overflow: hidden; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); }
         .course-image { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s cubic-bezier(.4,0,.2,1); }
         .course-card:hover .course-image { transform: scale(1.1); }
-        /* Shown only when <img> fails to load */
         .img-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; font-size: 3.5rem; color: rgba(255,255,255,0.6); background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); }
 
         .course-icon { width: 70px; height: 70px; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; box-shadow: 0 8px 25px rgba(79,70,229,.3); transition: all .4s ease; position: absolute; top: -35px; right: 2rem; z-index: 2; }
@@ -90,21 +85,9 @@
         @keyframes fadeInUp  { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
         @keyframes fadeInRight { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
 
-        @media(max-width:968px){
-            .dashboard-header{padding:1.25rem 1.5rem} .header-content{flex-direction:column;gap:1.5rem}
-            .user-section{width:100%;justify-content:space-between} .dashboard-main{padding:2rem 1.5rem}
-            .welcome-section{padding:2rem} .welcome-title{font-size:2rem} .courses-grid{grid-template-columns:1fr;gap:2rem}
-        }
-        @media(max-width:480px){
-            .logo-text{font-size:1.2rem} .user-info{display:none} .welcome-title{font-size:1.75rem} .welcome-subtitle{font-size:1rem}
-        }
-
-        /* ============================================================
-           ENROLLED COURSES TABLE — FIXED
-           Uses display:none / display:block (reliable cross-browser)
-        ============================================================ */
+        /* Enrolled Courses Table */
         .enrolled-wrapper {
-            display: none;          /* JS sets to block when rows exist */
+            display: none;
             margin-bottom: 3rem;
             animation: fadeInUp .7s ease-out both;
         }
@@ -135,9 +118,7 @@
         .go-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(21,128,61,.35); }
         .action-none { color: #cbd5e1; font-size: .85rem; font-style: italic; }
 
-        /* ============================================================
-           ENROLLMENT MODAL — UNCHANGED
-        ============================================================ */
+        /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.6); backdrop-filter: blur(5px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity .28s ease; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-box { background: #fff; border-radius: 28px; width: 100%; max-width: 540px; max-height: 92vh; overflow-y: auto; box-shadow: 0 32px 80px rgba(0,0,0,.22); transform: translateY(36px) scale(.96); transition: transform .32s cubic-bezier(.34,1.3,.64,1); }
@@ -176,13 +157,14 @@
         @media(max-width:600px){
             .modal-box{border-radius:20px} .modal-head{padding:1.35rem 1.5rem 1.1rem;border-radius:20px 20px 0 0} .modal-body{padding:1.35rem 1.5rem 1.75rem} .f-row{grid-template-columns:1fr}
         }
-        @media(max-width:968px){ .enrolled-top-row{flex-direction:column;align-items:flex-start} }
+        @media(max-width:968px){ .enrolled-top-row{flex-direction:column;align-items:flex-start} .dashboard-header{padding:1.25rem 1.5rem} .header-content{flex-direction:column;gap:1.5rem} .user-section{width:100%;justify-content:space-between} .dashboard-main{padding:2rem 1.5rem} .welcome-section{padding:2rem} .welcome-title{font-size:2rem} .courses-grid{grid-template-columns:1fr;gap:2rem} }
+        @media(max-width:480px){ .logo-text{font-size:1.2rem} .user-info{display:none} .welcome-title{font-size:1.75rem} .welcome-subtitle{font-size:1rem} }
     </style>
 </head>
 <body>
     <div class="blueprint-bg"></div>
 
-    <!-- Header — UNCHANGED -->
+    <!-- Header -->
     <header class="dashboard-header">
         <div class="header-content">
             <div class="logo-section">
@@ -204,7 +186,7 @@
 
     <main class="dashboard-main">
 
-        <!-- Welcome — UNCHANGED -->
+        <!-- Welcome -->
         <section class="welcome-section">
             <h1 class="welcome-title">Welcome to Your Learning Portal</h1>
             <p class="welcome-subtitle">
@@ -213,10 +195,7 @@
             </p>
         </section>
 
-        <!-- ═══════════════════════════════════════════════════════
-             MY ENROLLED COURSES — appears ABOVE available courses
-             Hidden by default; revealed by JS when rows > 0
-        ═══════════════════════════════════════════════════════ -->
+        <!-- My Enrolled Courses -->
         <div class="enrolled-wrapper" id="enrolledWrapper">
             <div class="enrolled-card">
                 <div class="enrolled-top-row">
@@ -256,9 +235,7 @@
 
             <div class="courses-grid">
 
-                <!-- ── AutoCAD ──
-                     FIX 7: SVG replaced with <img src="images/autocad.jpg">
-                     onerror shows gradient fallback if file missing -->
+                <!-- AutoCAD -->
                 <div class="course-card">
                     <div class="course-image-container">
                         <img class="course-image" src="images/what-you-can-do-with-autocad-large-1650x1080.jpg" alt="AutoCAD"
@@ -279,7 +256,7 @@
                     </div>
                 </div>
 
-                <!-- ── ETABS ── -->
+                <!-- ETABS -->
                 <div class="course-card">
                     <div class="course-image-container">
                         <img class="course-image" src="images/etabs-500x500.webp" alt="ETABS"
@@ -300,7 +277,7 @@
                     </div>
                 </div>
 
-                <!-- ── STAAD Pro ── -->
+                <!-- STAAD Pro -->
                 <div class="course-card">
                     <div class="course-image-container">
                         <img class="course-image" src="images/STAAD.Pro_Physical-modeler-800x400-1.jpg" alt="STAAD Pro"
@@ -321,7 +298,7 @@
                     </div>
                 </div>
 
-                <!-- ── Revit Architecture ── -->
+                <!-- Revit Architecture -->
                 <div class="course-card">
                     <div class="course-image-container">
                         <img class="course-image" src="images/WhatsApp Image 2026-02-16 at 11.51.50 PM.jpeg" alt="Revit Architecture"
@@ -342,7 +319,7 @@
                     </div>
                 </div>
 
-                <!-- ── Total Station ── -->
+                <!-- Total Station -->
                 <div class="course-card">
                     <div class="course-image-container">
                         <img class="course-image" src="images/manual-total-stations-teaser1.jpeg" alt="Total Station"
@@ -367,7 +344,7 @@
         </section>
     </main>
 
-    <!-- Enrollment Modal — UNCHANGED -->
+    <!-- Enrollment Modal -->
     <div class="modal-overlay" id="enrollModal" onclick="window._overlayClick(event)">
         <div class="modal-box" role="dialog" aria-modal="true">
             <div class="modal-head">
@@ -436,18 +413,7 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════
-         FIREBASE v10 MODULAR SDK
-         ─────────────────────────────────────────────────────
-         KEY FIXES vs previous version:
-         ① _resolveUid()  — handles uid / userId / id field names
-            so enrollments are fetched regardless of how the
-            session object was originally constructed.
-         ② _subscribeEnrollments() called after uid is confirmed
-         ③ onSnapshot error handler logs full details to console
-         ④ _renderTable() always called — never silently skipped
-         ⑤ Composite Firestore index note printed to console
-    ═══════════════════════════════════════════════════════ -->
+    <!-- Firebase v10 -->
     <script type="module">
 
         import { initializeApp, getApps, getApp }
@@ -456,10 +422,9 @@
             from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import {
             getFirestore, collection, addDoc,
-            query, where, orderBy, onSnapshot, serverTimestamp
+            query, where, onSnapshot, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        /* ── Config — UNCHANGED ── */
         const firebaseConfig = {
             apiKey:            "AIzaSyBy18nqqaq3nsaFkv3E7hmyJhQOv6gGg_g",
             authDomain:        "apex-cad-solutions.firebaseapp.com",
@@ -469,27 +434,17 @@
             appId:             "1:701417388296:web:6173bd62d6cfa4014ad4bd"
         };
 
-        /* ── Singleton — UNCHANGED ── */
         const app  = getApps().length ? getApp() : initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db   = getFirestore(app);
         console.log("🔥 Firebase v10 ready");
 
-        let _user         = null;   // full session object
-        let _uid          = null;   // resolved Firebase UID string
+        let _user         = null;
+        let _uid          = null;
         let _activeCourse = "";
         let _unsubSnap    = null;
 
-        /* ═══════════════════════════════════════════════════════
-           FIX ①: RESOLVE UID
-           Handles every possible field name that index.html
-           might store in sessionStorage.currentUser:
-             • uid  (Firebase standard)
-             • userId
-             • id
-             • user_id
-           Prints what it found so you can see it in DevTools.
-        ═══════════════════════════════════════════════════════ */
+        /* FIX: Resolve UID from session object */
         function _resolveUid(userObj) {
             const candidate = userObj.uid
                            || userObj.userId
@@ -501,9 +456,6 @@
             return candidate;
         }
 
-        /* ═══════════════════════════════════════════════════════
-           INIT DASHBOARD — routing logic UNCHANGED
-        ═══════════════════════════════════════════════════════ */
         function initDashboard() {
             console.log("🚀 initDashboard() called — readyState:", document.readyState);
             try {
@@ -523,11 +475,7 @@
                 document.getElementById("ef_email").value = _user.email || "";
 
                 if (!_uid) {
-                    /* UID missing — log warning; enrollment table won't load
-                       but rest of dashboard works normally */
-                    console.warn("⚠️ No UID found in session. " +
-                        "Ensure index.html saves { uid: user.uid } to sessionStorage. " +
-                        "Enrollment table will not load until UID is present.");
+                    console.warn("⚠️ No UID found in session.");
                 } else {
                     _subscribeEnrollments();
                 }
@@ -539,18 +487,12 @@
             }
         }
 
-        /* ═══════════════════════════════════════════════════════
-           REAL-TIME ENROLLMENT LISTENER
-           FIX: removed orderBy() — it requires a composite Firestore
-           index that may not exist, causing a failed-precondition error
-           that silently kills the listener. Sorting is done client-side.
-        ═══════════════════════════════════════════════════════ */
+        /* FIX 3: Real-Time Listener for enrolled courses */
         function _subscribeEnrollments() {
             if (_unsubSnap) { _unsubSnap(); _unsubSnap = null; }
 
             console.log("📡 Subscribing to enrollments for uid:", _uid);
 
-            /* Single-field query — needs NO composite index */
             const q = query(
                 collection(db, "enrollments"),
                 where("userId", "==", _uid)
@@ -563,11 +505,11 @@
 
                     const rows = [];
                     snap.forEach(doc => {
-                        console.log("  → doc:", doc.id, doc.data());
+                        console.log("  → doc:", doc.id, "status:", doc.data().status);
                         rows.push({ id: doc.id, ...doc.data() });
                     });
 
-                    /* Sort newest-first in JS — no Firestore index needed */
+                    /* Sort newest-first */
                     rows.sort((a, b) => {
                         const ta = a.enrollmentDate?.toMillis?.() ?? 0;
                         const tb = b.enrollmentDate?.toMillis?.() ?? 0;
@@ -579,31 +521,17 @@
                 },
                 (err) => {
                     console.error("❌ onSnapshot error — code:", err.code, "| message:", err.message);
-                    if (err.code === "permission-denied") {
-                        console.warn("💡 Firestore rules are blocking reads. " +
-                            "Add this rule to Firestore:\n" +
-                            "  allow read: if request.auth != null && " +
-                            "request.auth.uid == resource.data.userId;");
-                    }
-                    if (err.code === "failed-precondition") {
-                        console.warn("💡 A composite index is required. " +
-                            "Click the link in the error message above to create it automatically.");
-                    }
                 }
             );
         }
 
-        /* ═══════════════════════════════════════════════════════
-           FIX ④: RENDER TABLE — with debug logging
-        ═══════════════════════════════════════════════════════ */
+        /* FIX 3: Render Table with "Go to Course" for approved */
         function _renderTable(rows) {
             const wrapper = document.getElementById("enrolledWrapper");
             const tbody   = document.getElementById("enrolledTbody");
             const countEl = document.getElementById("courseCount");
 
-            console.log("🎨 _renderTable called — rows:", rows.length,
-                        "| wrapper found:", !!wrapper,
-                        "| tbody found:",   !!tbody);
+            console.log("🎨 _renderTable called — rows:", rows.length);
 
             if (!rows.length) {
                 wrapper.classList.remove("visible");
@@ -614,10 +542,8 @@
 
             wrapper.classList.add("visible");
             countEl.textContent = rows.length;
-            console.log("✅ Wrapper shown — count set to", rows.length);
 
             tbody.innerHTML = rows.map(r => {
-                /* Safe date formatting */
                 let dateStr = "—";
                 try {
                     if (r.enrollmentDate && typeof r.enrollmentDate.toDate === "function") {
@@ -627,7 +553,7 @@
                     }
                 } catch (_) {}
 
-                /* Status from Firestore */
+                /* FIX 3: Check status field correctly */
                 const status     = (r.status || "pending").toLowerCase().trim();
                 const isApproved = status === "approved";
 
@@ -635,14 +561,14 @@
                     ? `<span class="status-badge badge-approved"><i class="fas fa-check-circle"></i> Approved</span>`
                     : `<span class="status-badge badge-pending"><i class="fas fa-clock"></i> Pending</span>`;
 
-                /* Action column:
-                   approved → Go to Course button
-                   pending  → dash only (no button) */
+                /* FIX 3: Show "Go to Course" ONLY when approved */
                 const action = isApproved
                     ? `<a class="go-btn" href="course-${_slugify(r.courseName)}.html">
                            <i class="fas fa-play-circle"></i> Go to Course
                        </a>`
                     : `<span class="action-none">—</span>`;
+
+                console.log("  ↳ Row:", r.courseName, "status:", status, "approved:", isApproved);
 
                 return `<tr>
                     <td>${_esc(r.courseName || "—")}</td>
@@ -653,18 +579,13 @@
             }).join("");
         }
 
-        /* Convert course name to URL-safe slug */
         function _slugify(name) {
             return String(name).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
         }
 
-        /* HTML escape */
         const _esc = s => String(s).replace(/[&<>"']/g,
             c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
-        /* ═══════════════════════════════════════════════════════
-           LOGOUT — UNCHANGED (+ listener teardown)
-        ═══════════════════════════════════════════════════════ */
         window.handleLogout = async function() {
             try {
                 console.log("🚪 Logging out…");
@@ -679,9 +600,6 @@
             }
         };
 
-        /* ═══════════════════════════════════════════════════════
-           MODAL OPEN / CLOSE
-        ═══════════════════════════════════════════════════════ */
         window.openEnrollModal = function(courseName) {
             _activeCourse = courseName;
             document.getElementById("modalCourseName").textContent = courseName;
@@ -689,10 +607,12 @@
             document.getElementById("enrollModal").classList.add("open");
             document.body.style.overflow = "hidden";
         };
+        
         window.closeEnrollModal = function() {
             document.getElementById("enrollModal").classList.remove("open");
             document.body.style.overflow = "";
         };
+        
         window._overlayClick = e => { if (e.target.id === "enrollModal") window.closeEnrollModal(); };
         document.addEventListener("keydown", e => { if (e.key === "Escape") window.closeEnrollModal(); });
 
@@ -707,9 +627,6 @@
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Enrollment';
         }
 
-        /* ═══════════════════════════════════════════════════════
-           AGE CALCULATION
-        ═══════════════════════════════════════════════════════ */
         const dobInput = document.getElementById("ef_dob");
         dobInput.addEventListener("input",  _calcAge);
         dobInput.addEventListener("change", _calcAge);
@@ -735,9 +652,6 @@
             return (v && v !== "—") ? parseInt(v, 10) : null;
         }
 
-        /* ═══════════════════════════════════════════════════════
-           VALIDATION
-        ═══════════════════════════════════════════════════════ */
         function _showErr(id, msg) {
             const el = document.getElementById(id);
             if (msg) el.querySelector("span").textContent = msg;
@@ -771,23 +685,6 @@
             el.className=`m-alert show ${type}`;
         }
 
-        /* ═══════════════════════════════════════════════════════
-           FORM SUBMIT → FIRESTORE
-
-           Enrollment document structure (collection: "enrollments"):
-           ┌────────────────┬─────────────────────────────────────┐
-           │ userId         │ Firebase Auth UID (_uid)            │
-           │ userEmail      │ login email from session            │
-           │ courseName     │ e.g. "AutoCAD"                      │
-           │ fullName       │ from form                           │
-           │ dob            │ "YYYY-MM-DD"                        │
-           │ age            │ integer (auto-calculated)           │
-           │ email          │ from form                           │
-           │ phone          │ 10-digit string                     │
-           │ status         │ "pending" → admin sets "approved"   │
-           │ enrollmentDate │ serverTimestamp()                   │
-           └────────────────┴─────────────────────────────────────┘
-        ═══════════════════════════════════════════════════════ */
         document.getElementById("enrollForm").addEventListener("submit", async e => {
             e.preventDefault();
             if (!_validate()) return;
@@ -825,14 +722,10 @@
             }
         });
 
-        /* ── Start ──
-           FIX: <script type="module"> executes AFTER DOMContentLoaded has
-           already fired, so addEventListener("DOMContentLoaded") never
-           triggers. Guard with readyState instead. */
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", initDashboard);
         } else {
-            initDashboard();   // DOM is already ready — call directly
+            initDashboard();
         }
 
     </script>
