@@ -17,502 +17,181 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        /* ============================================================
+           BASE STYLES — UNCHANGED FROM ORIGINAL
+        ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary-blue: #4f46e5;
-            --secondary-purple: #7c3aed;
-            --accent-cyan: #06b6d4;
-            --accent-teal: #14b8a6;
-            --concrete-gray: #64748b;
-            --light-gray: #94a3b8;
+            --primary-blue: #4f46e5; --secondary-purple: #7c3aed;
+            --accent-cyan: #06b6d4;  --accent-teal: #14b8a6;
+            --concrete-gray: #64748b; --light-gray: #94a3b8;
         }
-        
-        body {
-            font-family: 'Inter', 'Poppins', sans-serif;
-            overflow-x: hidden;
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%);
-            min-height: 100vh;
+        body { font-family: 'Inter','Poppins',sans-serif; overflow-x: hidden; background: linear-gradient(135deg,rgba(79,70,229,.03) 0%,rgba(6,182,212,.03) 100%); min-height: 100vh; }
+
+        .blueprint-bg { background-image: linear-gradient(rgba(30,58,138,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(30,58,138,.04) 1px,transparent 1px),linear-gradient(rgba(30,58,138,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(30,58,138,.02) 1px,transparent 1px); background-size: 40px 40px,40px 40px,200px 200px,200px 200px; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; animation: gridShift 20s linear infinite; }
+        @keyframes gridShift { 0%{background-position:0 0,0 0,0 0,0 0} 100%{background-position:40px 40px,40px 40px,200px 200px,200px 200px} }
+
+        .dashboard-header { background: rgba(255,255,255,.98); backdrop-filter: blur(20px); box-shadow: 0 4px 20px rgba(0,0,0,.08); padding: 1.5rem 3rem; position: sticky; top: 0; z-index: 100; transition: all .3s ease; }
+        .dashboard-header:hover { box-shadow: 0 6px 30px rgba(0,0,0,.12); }
+        .header-content { display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; }
+        .logo-section { display: flex; align-items: center; gap: 1.25rem; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; transition: all .4s cubic-bezier(.4,0,.2,1); filter: drop-shadow(0 2px 8px rgba(0,0,0,.1)); }
+        .logo-img:hover { transform: scale(1.05) rotate(2deg); }
+        .logo-text { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .user-section { display: flex; align-items: center; gap: 1.5rem; }
+        .user-info { text-align: right; animation: fadeInRight .6s ease-out; }
+        .user-name { font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); margin-bottom: .25rem; }
+        .user-email { font-size: .85rem; color: var(--concrete-gray); }
+        .user-avatar { width: 50px; height: 50px; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 700; box-shadow: 0 6px 20px rgba(79,70,229,.3); transition: all .4s ease; animation: fadeInRight .6s ease-out .2s both; }
+        .user-avatar:hover { transform: rotate(5deg) scale(1.1); box-shadow: 0 8px 25px rgba(6,182,212,.4); }
+        .logout-btn { padding: .75rem 1.5rem; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all .4s cubic-bezier(.4,0,.2,1); box-shadow: 0 4px 15px rgba(79,70,229,.3); animation: fadeInRight .6s ease-out .4s both; }
+        .logout-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(79,70,229,.5); }
+
+        .dashboard-main { max-width: 1600px; margin: 0 auto; padding: 3rem; }
+        .welcome-section { background: rgba(255,255,255,.98); backdrop-filter: blur(20px); border-radius: 24px; padding: 3rem; margin-bottom: 3rem; box-shadow: 0 10px 40px rgba(0,0,0,.08); animation: fadeInUp .8s ease-out; position: relative; overflow: hidden; }
+        .welcome-section::before { content:''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%; background: radial-gradient(circle,rgba(124,58,237,.05) 0%,transparent 70%); pointer-events: none; }
+        .welcome-title { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; }
+        .welcome-subtitle { font-size: 1.2rem; color: var(--concrete-gray); line-height: 1.6; }
+
+        .courses-section { margin-top: 3rem; }
+        .section-header { margin-bottom: 2.5rem; animation: fadeInUp .8s ease-out .2s both; }
+        .section-title { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: .5rem; }
+        .section-subtitle { font-size: 1.1rem; color: var(--concrete-gray); }
+
+        .courses-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(350px,1fr)); gap: 2.5rem; margin-bottom: 3rem; }
+        .course-card { background: rgba(255,255,255,.98); backdrop-filter: blur(20px); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.08); transition: all .4s cubic-bezier(.4,0,.2,1); border: 1px solid rgba(255,255,255,.6); position: relative; animation: fadeInUp .8s ease-out both; }
+        .course-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg,var(--primary-blue),var(--secondary-purple),var(--accent-cyan)); transform: scaleX(0); transition: transform .4s ease; }
+        .course-card:hover::before { transform: scaleX(1); }
+        .course-card:nth-child(1){animation-delay:.3s} .course-card:nth-child(2){animation-delay:.4s} .course-card:nth-child(3){animation-delay:.5s} .course-card:nth-child(4){animation-delay:.6s} .course-card:nth-child(5){animation-delay:.7s}
+        .course-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 25px 70px rgba(79,70,229,.2); }
+
+        /* ── FIX 7: course-image-container supports <img> tags ── */
+        .course-image-container { width: 100%; height: 220px; position: relative; overflow: hidden; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); }
+        .course-image { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s cubic-bezier(.4,0,.2,1); }
+        .course-card:hover .course-image { transform: scale(1.1); }
+        /* Shown only when <img> fails to load */
+        .img-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; font-size: 3.5rem; color: rgba(255,255,255,0.6); background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); }
+
+        .course-icon { width: 70px; height: 70px; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; box-shadow: 0 8px 25px rgba(79,70,229,.3); transition: all .4s ease; position: absolute; top: -35px; right: 2rem; z-index: 2; }
+        .course-card:hover .course-icon { transform: rotate(10deg) scale(1.15); box-shadow: 0 12px 35px rgba(6,182,212,.5); }
+        .course-content { padding: 2.5rem; }
+        .course-title { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; margin-top: .5rem; }
+        .course-description { color: var(--concrete-gray); line-height: 1.7; margin-bottom: 1.5rem; font-size: 1.05rem; }
+        .course-features { list-style: none; padding: 0; margin-bottom: 1.5rem; }
+        .course-features li { color: var(--concrete-gray); margin-bottom: .75rem; padding-left: 1.5rem; position: relative; font-size: .95rem; }
+        .course-features li::before { content:'✓'; position: absolute; left: 0; background: linear-gradient(135deg,var(--accent-cyan) 0%,var(--accent-teal) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: bold; font-size: 1.2rem; }
+
+        .enroll-btn { width: 100%; padding: 1rem 1.5rem; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); color: white; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all .4s cubic-bezier(.4,0,.2,1); box-shadow: 0 6px 20px rgba(79,70,229,.3); position: relative; overflow: hidden; }
+        .enroll-btn::before { content:''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255,255,255,.3); transform: translate(-50%,-50%); transition: width .6s ease,height .6s ease; }
+        .enroll-btn:hover::before { width: 300px; height: 300px; }
+        .enroll-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 35px rgba(79,70,229,.5); }
+        .enroll-btn:active { transform: translateY(-1px) scale(1); }
+
+        @keyframes fadeInUp  { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeInRight { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+
+        @media(max-width:968px){
+            .dashboard-header{padding:1.25rem 1.5rem} .header-content{flex-direction:column;gap:1.5rem}
+            .user-section{width:100%;justify-content:space-between} .dashboard-main{padding:2rem 1.5rem}
+            .welcome-section{padding:2rem} .welcome-title{font-size:2rem} .courses-grid{grid-template-columns:1fr;gap:2rem}
         }
-        
-        /* Blueprint/CAD Grid Background */
-        .blueprint-bg {
-            background-image: 
-                linear-gradient(rgba(30, 58, 138, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(30, 58, 138, 0.04) 1px, transparent 1px),
-                linear-gradient(rgba(30, 58, 138, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(30, 58, 138, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px, 40px 40px, 200px 200px, 200px 200px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            animation: gridShift 20s linear infinite;
+        @media(max-width:480px){
+            .logo-text{font-size:1.2rem} .user-info{display:none} .welcome-title{font-size:1.75rem} .welcome-subtitle{font-size:1rem}
         }
-        
-        @keyframes gridShift {
-            0% { background-position: 0 0, 0 0, 0 0, 0 0; }
-            100% { background-position: 40px 40px, 40px 40px, 200px 200px, 200px 200px; }
-        }
-        
-        /* Header */
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 1.5rem 3rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-        
-        .dashboard-header:hover {
-            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
-        }
-        
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
-        
-        .logo-img {
-            height: 55px;
-            width: auto;
-            object-fit: contain;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
-        }
-        
-        .logo-img:hover {
-            transform: scale(1.05) rotate(2deg);
-        }
-        
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
-        .user-info {
-            text-align: right;
-            animation: fadeInRight 0.6s ease-out;
-        }
-        
-        .user-name {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-bottom: 0.25rem;
-        }
-        
-        .user-email {
-            font-size: 0.85rem;
-            color: var(--concrete-gray);
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.3rem;
-            font-weight: 700;
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
-            transition: all 0.4s ease;
-            animation: fadeInRight 0.6s ease-out 0.2s both;
-        }
-        
-        .user-avatar:hover {
-            transform: rotate(5deg) scale(1.1);
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
-        }
-        
-        .logout-btn {
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            animation: fadeInRight 0.6s ease-out 0.4s both;
-        }
-        
-        .logout-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
-        }
-        
-        /* Main Content */
-        .dashboard-main {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 3rem;
-        }
-        
-        .welcome-section {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 3rem;
+
+        /* ============================================================
+           ENROLLED COURSES TABLE — FIXED
+           Uses display:none / display:block (reliable cross-browser)
+        ============================================================ */
+        .enrolled-wrapper {
+            display: none;          /* JS sets to block when rows exist */
             margin-bottom: 3rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            animation: fadeInUp 0.8s ease-out;
-            position: relative;
-            overflow: hidden;
+            animation: fadeInUp .7s ease-out both;
         }
-        
-        .welcome-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
-            pointer-events: none;
+        .enrolled-wrapper.visible { display: block; }
+
+        .enrolled-card { background: rgba(255,255,255,.98); backdrop-filter: blur(20px); border-radius: 24px; padding: 2.5rem; box-shadow: 0 10px 40px rgba(0,0,0,.08); border: 1px solid rgba(255,255,255,.6); position: relative; overflow: hidden; }
+        .enrolled-card::before { content:''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%; background: radial-gradient(circle,rgba(79,70,229,.04) 0%,transparent 70%); pointer-events: none; }
+
+        .enrolled-top-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem; }
+        .enrolled-heading { font-size: 1.75rem; font-weight: 800; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .count-chip { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.2rem; background: linear-gradient(135deg,rgba(79,70,229,.1) 0%,rgba(6,182,212,.1) 100%); border: 1.5px solid rgba(79,70,229,.2); border-radius: 50px; font-size: .95rem; font-weight: 700; color: var(--primary-blue); }
+
+        .enrolled-table-scroller { overflow-x: auto; border-radius: 14px; }
+        .enrolled-table { width: 100%; border-collapse: collapse; min-width: 580px; }
+        .enrolled-table thead { background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 100%); }
+        .enrolled-table th { padding: 1rem 1.4rem; text-align: left; color: white; font-weight: 600; font-size: .9rem; letter-spacing: .4px; white-space: nowrap; }
+        .enrolled-table tbody tr { border-bottom: 1px solid #f0f4f8; transition: background .2s; }
+        .enrolled-table tbody tr:last-child { border-bottom: none; }
+        .enrolled-table tbody tr:hover { background: linear-gradient(135deg,rgba(79,70,229,.03) 0%,rgba(6,182,212,.03) 100%); }
+        .enrolled-table td { padding: 1.05rem 1.4rem; color: var(--concrete-gray); font-size: .95rem; vertical-align: middle; }
+        .enrolled-table td:first-child { font-weight: 600; color: #1e293b; }
+
+        .status-badge { display: inline-flex; align-items: center; gap: .4rem; padding: .32rem .85rem; border-radius: 8px; font-size: .82rem; font-weight: 700; white-space: nowrap; }
+        .badge-pending  { background: rgba(234,88,12,.1);  color: #c2410c; border: 1.5px solid rgba(234,88,12,.25); }
+        .badge-approved { background: rgba(22,163,74,.1);  color: #15803d; border: 1.5px solid rgba(22,163,74,.25); }
+
+        .go-btn { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem 1.05rem; background: linear-gradient(135deg,#15803d 0%,#0d9488 100%); color: white; border: none; border-radius: 8px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .3s ease; white-space: nowrap; text-decoration: none; }
+        .go-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(21,128,61,.35); }
+        .action-none { color: #cbd5e1; font-size: .85rem; font-style: italic; }
+
+        /* ============================================================
+           ENROLLMENT MODAL — UNCHANGED
+        ============================================================ */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.6); backdrop-filter: blur(5px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity .28s ease; }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+        .modal-box { background: #fff; border-radius: 28px; width: 100%; max-width: 540px; max-height: 92vh; overflow-y: auto; box-shadow: 0 32px 80px rgba(0,0,0,.22); transform: translateY(36px) scale(.96); transition: transform .32s cubic-bezier(.34,1.3,.64,1); }
+        .modal-overlay.open .modal-box { transform: translateY(0) scale(1); }
+        .modal-head { padding: 1.75rem 2.25rem 1.4rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; position: sticky; top: 0; background: white; border-radius: 28px 28px 0 0; z-index: 10; }
+        .modal-title-text { font-size: 1.45rem; font-weight: 800; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.25; }
+        .modal-course-label { margin-top: .3rem; font-size: .82rem; font-weight: 600; color: var(--concrete-gray); display: flex; align-items: center; gap: .35rem; }
+        .modal-close-btn { width: 34px; height: 34px; border: none; background: #f1f5f9; border-radius: 10px; color: var(--concrete-gray); font-size: .95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s ease; flex-shrink: 0; }
+        .modal-close-btn:hover { background: #fee2e2; color: #dc2626; transform: rotate(90deg); }
+        .modal-body { padding: 1.6rem 2.25rem 2.25rem; }
+        .m-alert { display: none; align-items: center; gap: .6rem; padding: .8rem 1.1rem; border-radius: 10px; font-size: .9rem; font-weight: 500; margin-bottom: 1.3rem; line-height: 1.45; }
+        .m-alert.show    { display: flex; }
+        .m-alert.success { background: rgba(22,163,74,.09); border: 1.5px solid rgba(22,163,74,.28); color: #15803d; }
+        .m-alert.fail    { background: rgba(239,68,68,.08); border: 1.5px solid rgba(239,68,68,.25); color: #b91c1c; }
+        .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-bottom: 1.1rem; }
+        .f-row.solo { grid-template-columns: 1fr; }
+        .f-group { display: flex; flex-direction: column; gap: .42rem; }
+        .f-label { font-size: .86rem; font-weight: 650; color: var(--primary-blue); letter-spacing: .15px; }
+        .f-label .req { color: #ef4444; margin-left: 2px; }
+        .f-icon-wrap { position: relative; }
+        .f-icon { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: var(--light-gray); font-size: .85rem; pointer-events: none; }
+        .f-input { width: 100%; padding: .82rem .9rem .82rem 2.7rem; border: 2px solid #e5e7eb; border-radius: 11px; font-size: .95rem; font-family: inherit; background: #f8fafc; color: #1e293b; transition: all .25s ease; }
+        .f-input:hover  { border-color: #c7d2fe; background: #fff; }
+        .f-input:focus  { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(6,182,212,.14); background: #fff; }
+        .f-input.has-error { border-color: #f87171; box-shadow: 0 0 0 3px rgba(248,113,113,.14); }
+        .age-pill { display: none; align-items: center; gap: .4rem; margin-top: .35rem; padding: .35rem .8rem; background: linear-gradient(135deg,rgba(79,70,229,.08) 0%,rgba(6,182,212,.08) 100%); border-radius: 8px; font-size: .84rem; font-weight: 700; color: var(--primary-blue); }
+        .age-pill.show { display: inline-flex; }
+        .f-err { display: none; align-items: center; gap: .3rem; font-size: .78rem; color: #dc2626; font-weight: 500; margin-top: .2rem; }
+        .f-err.show { display: flex; }
+        .m-submit { width: 100%; margin-top: 1.5rem; padding: 1.05rem; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 50%,var(--accent-cyan) 100%); color: white; border: none; border-radius: 13px; font-size: 1.05rem; font-weight: 700; cursor: pointer; box-shadow: 0 6px 22px rgba(79,70,229,.35); transition: all .35s ease; display: flex; align-items: center; justify-content: center; gap: .5rem; }
+        .m-submit:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(79,70,229,.5); }
+        .m-submit:active { transform: translateY(-1px); }
+        .m-submit:disabled { opacity: .62; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-spin { width: 17px; height: 17px; border: 2.5px solid rgba(255,255,255,.35); border-top-color: white; border-radius: 50%; animation: spin .75s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        @media(max-width:600px){
+            .modal-box{border-radius:20px} .modal-head{padding:1.35rem 1.5rem 1.1rem;border-radius:20px 20px 0 0} .modal-body{padding:1.35rem 1.5rem 1.75rem} .f-row{grid-template-columns:1fr}
         }
-        
-        .welcome-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-        }
-        
-        .welcome-subtitle {
-            font-size: 1.2rem;
-            color: var(--concrete-gray);
-            line-height: 1.6;
-        }
-        
-        .courses-section {
-            margin-top: 3rem;
-        }
-        
-        .section-header {
-            margin-bottom: 2.5rem;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-        
-        .section-subtitle {
-            font-size: 1.1rem;
-            color: var(--concrete-gray);
-        }
-        
-        .courses-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .course-card {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            position: relative;
-            animation: fadeInUp 0.8s ease-out both;
-        }
-        
-        .course-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple), var(--accent-cyan));
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-        
-        .course-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .course-card:nth-child(1) { animation-delay: 0.3s; }
-        .course-card:nth-child(2) { animation-delay: 0.4s; }
-        .course-card:nth-child(3) { animation-delay: 0.5s; }
-        .course-card:nth-child(4) { animation-delay: 0.6s; }
-        .course-card:nth-child(5) { animation-delay: 0.7s; }
-        
-        .course-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 25px 70px rgba(79, 70, 229, 0.2);
-        }
-        
-        .course-image-container {
-            width: 100%;
-            height: 220px;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
-        }
-        
-        .course-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .course-card:hover .course-image {
-            transform: scale(1.15) rotate(2deg);
-        }
-        
-        .course-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
-            transition: all 0.4s ease;
-            position: absolute;
-            top: -35px;
-            right: 2rem;
-            z-index: 2;
-        }
-        
-        .course-card:hover .course-icon {
-            transform: rotate(10deg) scale(1.15);
-            box-shadow: 0 12px 35px rgba(6, 182, 212, 0.5);
-        }
-        
-        .course-content {
-            padding: 2.5rem;
-        }
-        
-        .course-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            margin-top: 0.5rem;
-        }
-        
-        .course-description {
-            color: var(--concrete-gray);
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-        
-        .course-features {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 1.5rem;
-        }
-        
-        .course-features li {
-            color: var(--concrete-gray);
-            margin-bottom: 0.75rem;
-            padding-left: 1.5rem;
-            position: relative;
-            font-size: 0.95rem;
-        }
-        
-        .course-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-teal) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .enroll-btn {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 50%, var(--accent-cyan) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .enroll-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-        }
-        
-        .enroll-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .enroll-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 35px rgba(79, 70, 229, 0.5);
-        }
-        
-        .enroll-btn:active {
-            transform: translateY(-1px) scale(1);
-        }
-        
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 968px) {
-            .dashboard-header {
-                padding: 1.25rem 1.5rem;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            
-            .user-section {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .dashboard-main {
-                padding: 2rem 1.5rem;
-            }
-            
-            .welcome-section {
-                padding: 2rem;
-            }
-            
-            .welcome-title {
-                font-size: 2rem;
-            }
-            
-            .courses-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .logo-text {
-                font-size: 1.2rem;
-            }
-            
-            .user-info {
-                display: none;
-            }
-            
-            .welcome-title {
-                font-size: 1.75rem;
-            }
-            
-            .welcome-subtitle {
-                font-size: 1rem;
-            }
-        }
+        @media(max-width:968px){ .enrolled-top-row{flex-direction:column;align-items:flex-start} }
     </style>
 </head>
 <body>
     <div class="blueprint-bg"></div>
-    
-    <!-- Dashboard Header -->
+
+    <!-- Header — UNCHANGED -->
     <header class="dashboard-header">
         <div class="header-content">
             <div class="logo-section">
                 <img src="logo.jpg.jpeg" alt="Apex CAD Logo" class="logo-img">
                 <span class="logo-text">Apex CAD & Survey Solutions</span>
             </div>
-            
             <div class="user-section">
                 <div class="user-info">
-                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-name"  id="userName">Loading...</div>
                     <div class="user-email" id="userEmail">Loading...</div>
                 </div>
                 <div class="user-avatar" id="userAvatar">U</div>
@@ -522,338 +201,640 @@
             </div>
         </div>
     </header>
-    
-    <!-- Main Dashboard Content -->
+
     <main class="dashboard-main">
-        <!-- Welcome Section -->
+
+        <!-- Welcome — UNCHANGED -->
         <section class="welcome-section">
             <h1 class="welcome-title">Welcome to Your Learning Portal</h1>
             <p class="welcome-subtitle">
-                Explore our comprehensive CAD and Civil Survey courses designed to advance your career in civil engineering. 
+                Explore our comprehensive CAD and Civil Survey courses designed to advance your career in civil engineering.
                 Each course offers industry-standard training and certification upon completion.
             </p>
         </section>
-        
-        <!-- Available Courses Section -->
+
+        <!-- ═══════════════════════════════════════════════════════
+             MY ENROLLED COURSES — appears ABOVE available courses
+             Hidden by default; revealed by JS when rows > 0
+        ═══════════════════════════════════════════════════════ -->
+        <div class="enrolled-wrapper" id="enrolledWrapper">
+            <div class="enrolled-card">
+                <div class="enrolled-top-row">
+                    <h2 class="enrolled-heading">
+                        <i class="fas fa-graduation-cap" style="margin-right:.5rem;opacity:.85"></i>
+                        My Enrolled Courses
+                    </h2>
+                    <div class="count-chip">
+                        <i class="fas fa-layer-group"></i>
+                        Total Courses Enrolled:&nbsp;<strong id="courseCount">0</strong>
+                    </div>
+                </div>
+                <div class="enrolled-table-scroller">
+                    <table class="enrolled-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-book-open" style="margin-right:.4rem;opacity:.8"></i>Course Name</th>
+                                <th><i class="fas fa-calendar-alt" style="margin-right:.4rem;opacity:.8"></i>Enrollment Date</th>
+                                <th><i class="fas fa-circle-dot" style="margin-right:.4rem;opacity:.8"></i>Status</th>
+                                <th><i class="fas fa-bolt" style="margin-right:.4rem;opacity:.8"></i>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enrolledTbody">
+                            <!-- Rows injected by _renderTable() -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Courses -->
         <section class="courses-section">
             <div class="section-header">
                 <h2 class="section-title">Available Courses</h2>
                 <p class="section-subtitle">Choose from our selection of professional training programs</p>
             </div>
-            
+
             <div class="courses-grid">
-                <!-- AutoCAD Course -->
+
+                <!-- ── AutoCAD ──
+                     FIX 7: SVG replaced with <img src="images/autocad.jpg">
+                     onerror shows gradient fallback if file missing -->
                 <div class="course-card">
                     <div class="course-image-container">
-                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect width="400" height="300" fill="url(#grad1)"/>
-                            <g stroke="rgba(255,255,255,0.2)" stroke-width="1">
-                                <line x1="0" y1="50" x2="400" y2="50"/><line x1="0" y1="100" x2="400" y2="100"/>
-                                <line x1="0" y1="150" x2="400" y2="150"/><line x1="0" y1="200" x2="400" y2="200"/>
-                                <line x1="50" y1="0" x2="50" y2="300"/><line x1="200" y1="0" x2="200" y2="300"/>
-                                <line x1="350" y1="0" x2="350" y2="300"/>
-                            </g>
-                            <rect x="100" y="100" width="200" height="100" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
-                            <circle cx="200" cy="150" r="30" fill="none" stroke="white" stroke-width="2" opacity="0.8"/>
-                        </svg>
+                        <img class="course-image" src="images/what-you-can-do-with-autocad-large-1650x1080.jpg" alt="AutoCAD"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="img-fallback"><i class="fas fa-drafting-compass"></i></div>
                         <div class="course-icon"><i class="fas fa-drafting-compass"></i></div>
                     </div>
                     <div class="course-content">
                         <h3 class="course-title">AutoCAD</h3>
-                        <p class="course-description">
-                            Master 2D drafting, dimensioning, and technical drawing with industry-standard AutoCAD.
-                        </p>
+                        <p class="course-description">Master 2D drafting, dimensioning, and technical drawing with industry-standard AutoCAD.</p>
                         <ul class="course-features">
-                            <li>2D Drafting & Design</li>
-                            <li>Technical Drawing Standards</li>
-                            <li>Layer & Dimension Management</li>
-                            <li>Industry Certification</li>
+                            <li>2D Drafting & Design</li><li>Technical Drawing Standards</li>
+                            <li>Layer & Dimension Management</li><li>Industry Certification</li>
                         </ul>
-                        <button class="enroll-btn" onclick="window.enrollCourse('AutoCAD')">
+                        <button class="enroll-btn" onclick="window.openEnrollModal('AutoCAD')">
                             <i class="fas fa-check-circle"></i> Enroll Now
                         </button>
                     </div>
                 </div>
-                
-                <!-- ETABS Course -->
+
+                <!-- ── ETABS ── -->
                 <div class="course-card">
                     <div class="course-image-container">
-                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#06b6d4;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect width="400" height="300" fill="url(#grad2)"/>
-                            <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
-                                <line x1="50" y1="250" x2="350" y2="250"/>
-                                <line x1="100" y1="250" x2="100" y2="100"/>
-                                <line x1="200" y1="250" x2="200" y2="80"/>
-                                <line x1="300" y1="250" x2="300" y2="100"/>
-                                <line x1="100" y1="100" x2="200" y2="80"/>
-                                <line x1="200" y1="80" x2="300" y2="100"/>
-                            </g>
-                        </svg>
+                        <img class="course-image" src="images/etabs-500x500.webp" alt="ETABS"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="img-fallback"><i class="fas fa-building"></i></div>
                         <div class="course-icon"><i class="fas fa-building"></i></div>
                     </div>
                     <div class="course-content">
                         <h3 class="course-title">ETABS</h3>
-                        <p class="course-description">
-                            Learn building analysis and design with ETABS for structural modeling and high-rise structures.
-                        </p>
+                        <p class="course-description">Learn building analysis and design with ETABS for structural modeling and high-rise structures.</p>
                         <ul class="course-features">
-                            <li>Structural Analysis</li>
-                            <li>Building Modeling</li>
-                            <li>Load & Design Codes</li>
-                            <li>Industry Certification</li>
+                            <li>Structural Analysis</li><li>Building Modeling</li>
+                            <li>Load & Design Codes</li><li>Industry Certification</li>
                         </ul>
-                        <button class="enroll-btn" onclick="window.enrollCourse('ETABS')">
+                        <button class="enroll-btn" onclick="window.openEnrollModal('ETABS')">
                             <i class="fas fa-check-circle"></i> Enroll Now
                         </button>
                     </div>
                 </div>
-                
-                <!-- STAAD Pro Course -->
+
+                <!-- ── STAAD Pro ── -->
                 <div class="course-card">
                     <div class="course-image-container">
-                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#14b8a6;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect width="400" height="300" fill="url(#grad3)"/>
-                            <g stroke="white" stroke-width="3" fill="none" opacity="0.9">
-                                <line x1="80" y1="220" x2="320" y2="220"/>
-                                <line x1="120" y1="220" x2="120" y2="100"/>
-                                <line x1="200" y1="220" x2="200" y2="70"/>
-                                <line x1="280" y1="220" x2="280" y2="100"/>
-                            </g>
-                        </svg>
+                        <img class="course-image" src="images/STAAD.Pro_Physical-modeler-800x400-1.jpg" alt="STAAD Pro"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="img-fallback"><i class="fas fa-cubes"></i></div>
                         <div class="course-icon"><i class="fas fa-cubes"></i></div>
                     </div>
                     <div class="course-content">
                         <h3 class="course-title">STAAD Pro</h3>
-                        <p class="course-description">
-                            Professional structural analysis and design for steel, concrete, and composite structures.
-                        </p>
+                        <p class="course-description">Professional structural analysis and design for steel, concrete, and composite structures.</p>
                         <ul class="course-features">
-                            <li>Structural Analysis</li>
-                            <li>Steel & Concrete Design</li>
-                            <li>Code Compliance</li>
-                            <li>Industry Certification</li>
+                            <li>Structural Analysis</li><li>Steel & Concrete Design</li>
+                            <li>Code Compliance</li><li>Industry Certification</li>
                         </ul>
-                        <button class="enroll-btn" onclick="window.enrollCourse('STAAD Pro')">
+                        <button class="enroll-btn" onclick="window.openEnrollModal('STAAD Pro')">
                             <i class="fas fa-check-circle"></i> Enroll Now
                         </button>
                     </div>
                 </div>
-                
-                <!-- Revit Architecture Course -->
+
+                <!-- ── Revit Architecture ── -->
                 <div class="course-card">
                     <div class="course-image-container">
-                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#4f46e5;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect width="400" height="300" fill="url(#grad4)"/>
-                            <g transform="translate(200,150)">
-                                <rect x="-80" y="-60" width="160" height="120" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="2"/>
-                                <polygon points="-80,-60 0,-120 80,-60" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
-                            </g>
-                        </svg>
+                        <img class="course-image" src="images/WhatsApp Image 2026-02-16 at 11.51.50 PM.jpeg" alt="Revit Architecture"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="img-fallback"><i class="fas fa-cube"></i></div>
                         <div class="course-icon"><i class="fas fa-cube"></i></div>
                     </div>
                     <div class="course-content">
                         <h3 class="course-title">Revit Architecture</h3>
-                        <p class="course-description">
-                            BIM-based architectural design with detailed 3D modeling and coordinated documentation.
-                        </p>
+                        <p class="course-description">BIM-based architectural design with detailed 3D modeling and coordinated documentation.</p>
                         <ul class="course-features">
-                            <li>BIM Workflows</li>
-                            <li>3D Modeling & Documentation</li>
-                            <li>Coordination & Visualization</li>
-                            <li>Industry Certification</li>
+                            <li>BIM Workflows</li><li>3D Modeling & Documentation</li>
+                            <li>Coordination & Visualization</li><li>Industry Certification</li>
                         </ul>
-                        <button class="enroll-btn" onclick="window.enrollCourse('Revit Architecture')">
+                        <button class="enroll-btn" onclick="window.openEnrollModal('Revit Architecture')">
                             <i class="fas fa-check-circle"></i> Enroll Now
                         </button>
                     </div>
                 </div>
-                
-                <!-- Total Station Course -->
+
+                <!-- ── Total Station ── -->
                 <div class="course-card">
                     <div class="course-image-container">
-                        <svg class="course-image" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect width="400" height="300" fill="url(#grad5)"/>
-                            <g transform="translate(200,150)">
-                                <circle cx="0" cy="0" r="35" fill="none" stroke="white" stroke-width="3" opacity="0.9"/>
-                                <circle cx="0" cy="0" r="25" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2"/>
-                                <line x1="-35" y1="0" x2="35" y2="0" stroke="white" stroke-width="2"/>
-                            </g>
-                        </svg>
+                        <img class="course-image" src="images/manual-total-stations-teaser1.jpeg" alt="Total Station"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="img-fallback"><i class="fas fa-map-marked-alt"></i></div>
                         <div class="course-icon"><i class="fas fa-map-marked-alt"></i></div>
                     </div>
                     <div class="course-content">
                         <h3 class="course-title">Total Station</h3>
-                        <p class="course-description">
-                            Land surveying with Total Station for field measurements and topographic surveys.
-                        </p>
+                        <p class="course-description">Land surveying with Total Station for field measurements and topographic surveys.</p>
                         <ul class="course-features">
-                            <li>Field Survey & Measurements</li>
-                            <li>Topographic Mapping</li>
-                            <li>Construction Layout</li>
-                            <li>Industry Certification</li>
+                            <li>Field Survey & Measurements</li><li>Topographic Mapping</li>
+                            <li>Construction Layout</li><li>Industry Certification</li>
                         </ul>
-                        <button class="enroll-btn" onclick="window.enrollCourse('Total Station')">
+                        <button class="enroll-btn" onclick="window.openEnrollModal('Total Station')">
                             <i class="fas fa-check-circle"></i> Enroll Now
                         </button>
                     </div>
                 </div>
+
             </div>
         </section>
     </main>
-    
-  <!-- Firebase v10 Modular SDK (SINGLE FILE, GITHUB-PAGES SAFE) -->
-<script type="module">
-  // ===============================
-  // FIREBASE v10 IMPORTS
-  // ===============================
-  import {
-    initializeApp,
-    getApps,
-    getApp
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-  import {
-    getAuth,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    <!-- Enrollment Modal — UNCHANGED -->
+    <div class="modal-overlay" id="enrollModal" onclick="window._overlayClick(event)">
+        <div class="modal-box" role="dialog" aria-modal="true">
+            <div class="modal-head">
+                <div>
+                    <div class="modal-title-text">Course Enrollment</div>
+                    <div class="modal-course-label">
+                        <i class="fas fa-book"></i>
+                        <span id="modalCourseName">—</span>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="window.closeEnrollModal()" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="m-alert" id="mAlert"></div>
+                <form id="enrollForm" novalidate autocomplete="off">
+                    <div class="f-row solo">
+                        <div class="f-group">
+                            <label class="f-label" for="ef_name">Full Name <span class="req">*</span></label>
+                            <div class="f-icon-wrap">
+                                <input class="f-input" type="text" id="ef_name" placeholder="Enter your full name">
+                                <i class="fas fa-user f-icon"></i>
+                            </div>
+                            <div class="f-err" id="err_name"><i class="fas fa-exclamation-circle"></i><span>Full name is required.</span></div>
+                        </div>
+                    </div>
+                    <div class="f-row">
+                        <div class="f-group">
+                            <label class="f-label" for="ef_dob">Date of Birth <span class="req">*</span></label>
+                            <div class="f-icon-wrap">
+                                <input class="f-input" type="date" id="ef_dob">
+                                <i class="fas fa-calendar-day f-icon"></i>
+                            </div>
+                            <div class="age-pill" id="agePill">
+                                <i class="fas fa-user-clock"></i>
+                                Age:&nbsp;<strong id="ageVal">—</strong>&nbsp;yrs
+                            </div>
+                            <div class="f-err" id="err_dob"><i class="fas fa-exclamation-circle"></i><span>Valid date of birth is required.</span></div>
+                        </div>
+                        <div class="f-group">
+                            <label class="f-label" for="ef_email">Email Address <span class="req">*</span></label>
+                            <div class="f-icon-wrap">
+                                <input class="f-input" type="email" id="ef_email" placeholder="you@example.com">
+                                <i class="fas fa-envelope f-icon"></i>
+                            </div>
+                            <div class="f-err" id="err_email"><i class="fas fa-exclamation-circle"></i><span>Valid email is required.</span></div>
+                        </div>
+                    </div>
+                    <div class="f-row solo">
+                        <div class="f-group">
+                            <label class="f-label" for="ef_phone">Phone Number <span class="req">*</span></label>
+                            <div class="f-icon-wrap">
+                                <input class="f-input" type="tel" id="ef_phone" placeholder="10-digit mobile number"
+                                       maxlength="10" oninput="this.value=this.value.replace(/\D/g,'')">
+                                <i class="fas fa-phone f-icon"></i>
+                            </div>
+                            <div class="f-err" id="err_phone"><i class="fas fa-exclamation-circle"></i><span>Enter a valid 10-digit phone number.</span></div>
+                        </div>
+                    </div>
+                    <button class="m-submit" type="submit" id="mSubmitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Enrollment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-  // ===============================
-  // FIREBASE CONFIG
-  // ===============================
-  const firebaseConfig = {
-    apiKey: "AIzaSyBy18nqqaq3nsaFkv3E7hmyJhQOv6gGg_g",
-    authDomain: "apex-cad-solutions.firebaseapp.com",
-    projectId: "apex-cad-solutions",
-    storageBucket: "apex-cad-solutions.firebasestorage.app",
-    messagingSenderId: "701417388296",
-    appId: "1:701417388296:web:6173bd62d6cfa4014ad4bd"
-  };
+    <!-- ═══════════════════════════════════════════════════════
+         FIREBASE v10 MODULAR SDK
+         ─────────────────────────────────────────────────────
+         KEY FIXES vs previous version:
+         ① _resolveUid()  — handles uid / userId / id field names
+            so enrollments are fetched regardless of how the
+            session object was originally constructed.
+         ② _subscribeEnrollments() called after uid is confirmed
+         ③ onSnapshot error handler logs full details to console
+         ④ _renderTable() always called — never silently skipped
+         ⑤ Composite Firestore index note printed to console
+    ═══════════════════════════════════════════════════════ -->
+    <script type="module">
 
-  // ===============================
-  // INITIALIZE FIREBASE (SINGLETON)
-  // ===============================
-  const app = getApps().length
-    ? getApp()
-    : initializeApp(firebaseConfig);
+        import { initializeApp, getApps, getApp }
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut }
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import {
+            getFirestore, collection, addDoc,
+            query, where, orderBy, onSnapshot, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const auth = getAuth(app);
+        /* ── Config — UNCHANGED ── */
+        const firebaseConfig = {
+            apiKey:            "AIzaSyBy18nqqaq3nsaFkv3E7hmyJhQOv6gGg_g",
+            authDomain:        "apex-cad-solutions.firebaseapp.com",
+            projectId:         "apex-cad-solutions",
+            storageBucket:     "apex-cad-solutions.firebasestorage.app",
+            messagingSenderId: "701417388296",
+            appId:             "1:701417388296:web:6173bd62d6cfa4014ad4bd"
+        };
 
-  console.log("🔥 Firebase ready (v10 modular)");
+        /* ── Singleton — UNCHANGED ── */
+        const app  = getApps().length ? getApp() : initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db   = getFirestore(app);
+        console.log("🔥 Firebase v10 ready");
 
-  // ===============================
-  // INIT DASHBOARD
-  // ===============================
-  function initDashboard() {
-    try {
-      const currentUser = sessionStorage.getItem("currentUser");
+        let _user         = null;   // full session object
+        let _uid          = null;   // resolved Firebase UID string
+        let _activeCourse = "";
+        let _unsubSnap    = null;
 
-      if (!currentUser) {
-        // ✅ GitHub Pages safe redirect
-        window.location.replace("/apex-cad-solutions/index.html");
-        return;
-      }
+        /* ═══════════════════════════════════════════════════════
+           FIX ①: RESOLVE UID
+           Handles every possible field name that index.html
+           might store in sessionStorage.currentUser:
+             • uid  (Firebase standard)
+             • userId
+             • id
+             • user_id
+           Prints what it found so you can see it in DevTools.
+        ═══════════════════════════════════════════════════════ */
+        function _resolveUid(userObj) {
+            const candidate = userObj.uid
+                           || userObj.userId
+                           || userObj.id
+                           || userObj.user_id
+                           || null;
+            console.log("🔑 UID resolved as:", candidate,
+                        "| full session keys:", Object.keys(userObj));
+            return candidate;
+        }
 
-      const userData = JSON.parse(currentUser);
+        /* ═══════════════════════════════════════════════════════
+           INIT DASHBOARD — routing logic UNCHANGED
+        ═══════════════════════════════════════════════════════ */
+        function initDashboard() {
+            console.log("🚀 initDashboard() called — readyState:", document.readyState);
+            try {
+                const raw = sessionStorage.getItem("currentUser");
+                if (!raw) { window.location.replace("./index.html"); return; }
 
-      document.getElementById("userName").textContent = userData.name;
-      document.getElementById("userEmail").textContent = userData.email;
+                _user = JSON.parse(raw);
+                _uid  = _resolveUid(_user);
 
-      const initials = userData.name
-        .split(" ")
-        .map(n => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+                document.getElementById("userName").textContent  = _user.name;
+                document.getElementById("userEmail").textContent = _user.email;
 
-      document.getElementById("userAvatar").textContent = initials;
+                const initials = _user.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+                document.getElementById("userAvatar").textContent = initials;
 
-      console.log("✅ Dashboard loaded for:", userData.email);
+                document.getElementById("ef_name").value  = _user.name  || "";
+                document.getElementById("ef_email").value = _user.email || "";
 
-    } catch (err) {
-      console.error("❌ Dashboard init error:", err);
-      alert("Failed to load dashboard");
-      window.location.replace("/apex-cad-solutions/index.html");
-    }
-  }
+                if (!_uid) {
+                    /* UID missing — log warning; enrollment table won't load
+                       but rest of dashboard works normally */
+                    console.warn("⚠️ No UID found in session. " +
+                        "Ensure index.html saves { uid: user.uid } to sessionStorage. " +
+                        "Enrollment table will not load until UID is present.");
+                } else {
+                    _subscribeEnrollments();
+                }
 
-  // ===============================
-  // LOGOUT (FIXED FOR GITHUB PAGES)
-  // ===============================
-  window.handleLogout = async function () {
-    try {
-      console.log("🚪 Logging out…");
+                console.log("✅ Dashboard ready for:", _user.email);
+            } catch (err) {
+                console.error("❌ Init error:", err);
+                window.location.replace("./index.html");
+            }
+        }
 
-      await signOut(auth);
+        /* ═══════════════════════════════════════════════════════
+           REAL-TIME ENROLLMENT LISTENER
+           FIX: removed orderBy() — it requires a composite Firestore
+           index that may not exist, causing a failed-precondition error
+           that silently kills the listener. Sorting is done client-side.
+        ═══════════════════════════════════════════════════════ */
+        function _subscribeEnrollments() {
+            if (_unsubSnap) { _unsubSnap(); _unsubSnap = null; }
 
-      sessionStorage.clear();
-      localStorage.clear();
+            console.log("📡 Subscribing to enrollments for uid:", _uid);
 
-      console.log("✅ Logout successful");
+            /* Single-field query — needs NO composite index */
+            const q = query(
+                collection(db, "enrollments"),
+                where("userId", "==", _uid)
+            );
 
-      // ✅ ABSOLUTE redirect (CRITICAL)
-      window.location.replace("./index.html");
+            _unsubSnap = onSnapshot(
+                q,
+                (snap) => {
+                    console.log("📋 onSnapshot fired — docs received:", snap.size);
 
-    } catch (error) {
-      console.error("❌ Logout error:", error);
+                    const rows = [];
+                    snap.forEach(doc => {
+                        console.log("  → doc:", doc.id, doc.data());
+                        rows.push({ id: doc.id, ...doc.data() });
+                    });
 
-      // Force cleanup even if Firebase fails
-      sessionStorage.clear();
-      localStorage.clear();
+                    /* Sort newest-first in JS — no Firestore index needed */
+                    rows.sort((a, b) => {
+                        const ta = a.enrollmentDate?.toMillis?.() ?? 0;
+                        const tb = b.enrollmentDate?.toMillis?.() ?? 0;
+                        return tb - ta;
+                    });
 
-      window.location.replace("./index.html");
-    }
-  };
+                    console.log("📊 Calling _renderTable with", rows.length, "row(s)");
+                    _renderTable(rows);
+                },
+                (err) => {
+                    console.error("❌ onSnapshot error — code:", err.code, "| message:", err.message);
+                    if (err.code === "permission-denied") {
+                        console.warn("💡 Firestore rules are blocking reads. " +
+                            "Add this rule to Firestore:\n" +
+                            "  allow read: if request.auth != null && " +
+                            "request.auth.uid == resource.data.userId;");
+                    }
+                    if (err.code === "failed-precondition") {
+                        console.warn("💡 A composite index is required. " +
+                            "Click the link in the error message above to create it automatically.");
+                    }
+                }
+            );
+        }
 
-  // ===============================
-  // COURSE ENROLL (PLACEHOLDER)
-  // ===============================
-  window.enrollCourse = function (courseName) {
-    alert(
-      `Enrollment for ${courseName} will be available soon.\n\nYou will be notified when enrollment opens.`
-    );
-    console.log("Course enrollment requested:", courseName);
-  };
+        /* ═══════════════════════════════════════════════════════
+           FIX ④: RENDER TABLE — with debug logging
+        ═══════════════════════════════════════════════════════ */
+        function _renderTable(rows) {
+            const wrapper = document.getElementById("enrolledWrapper");
+            const tbody   = document.getElementById("enrolledTbody");
+            const countEl = document.getElementById("courseCount");
 
-  // ===============================
-  // START
-  // ===============================
-  document.addEventListener("DOMContentLoaded", initDashboard);
-</script>
+            console.log("🎨 _renderTable called — rows:", rows.length,
+                        "| wrapper found:", !!wrapper,
+                        "| tbody found:",   !!tbody);
 
+            if (!rows.length) {
+                wrapper.classList.remove("visible");
+                tbody.innerHTML = "";
+                console.log("👻 No rows — wrapper hidden");
+                return;
+            }
+
+            wrapper.classList.add("visible");
+            countEl.textContent = rows.length;
+            console.log("✅ Wrapper shown — count set to", rows.length);
+
+            tbody.innerHTML = rows.map(r => {
+                /* Safe date formatting */
+                let dateStr = "—";
+                try {
+                    if (r.enrollmentDate && typeof r.enrollmentDate.toDate === "function") {
+                        dateStr = r.enrollmentDate.toDate().toLocaleDateString("en-IN", {
+                            day: "2-digit", month: "short", year: "numeric"
+                        });
+                    }
+                } catch (_) {}
+
+                /* Status from Firestore */
+                const status     = (r.status || "pending").toLowerCase().trim();
+                const isApproved = status === "approved";
+
+                const badge = isApproved
+                    ? `<span class="status-badge badge-approved"><i class="fas fa-check-circle"></i> Approved</span>`
+                    : `<span class="status-badge badge-pending"><i class="fas fa-clock"></i> Pending</span>`;
+
+                /* Action column:
+                   approved → Go to Course button
+                   pending  → dash only (no button) */
+                const action = isApproved
+                    ? `<a class="go-btn" href="course-${_slugify(r.courseName)}.html">
+                           <i class="fas fa-play-circle"></i> Go to Course
+                       </a>`
+                    : `<span class="action-none">—</span>`;
+
+                return `<tr>
+                    <td>${_esc(r.courseName || "—")}</td>
+                    <td>${dateStr}</td>
+                    <td>${badge}</td>
+                    <td>${action}</td>
+                </tr>`;
+            }).join("");
+        }
+
+        /* Convert course name to URL-safe slug */
+        function _slugify(name) {
+            return String(name).toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+        }
+
+        /* HTML escape */
+        const _esc = s => String(s).replace(/[&<>"']/g,
+            c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+        /* ═══════════════════════════════════════════════════════
+           LOGOUT — UNCHANGED (+ listener teardown)
+        ═══════════════════════════════════════════════════════ */
+        window.handleLogout = async function() {
+            try {
+                console.log("🚪 Logging out…");
+                if (_unsubSnap) _unsubSnap();
+                await signOut(auth);
+                sessionStorage.clear(); localStorage.clear();
+                window.location.replace("./index.html");
+            } catch (error) {
+                console.error("❌ Logout error:", error);
+                sessionStorage.clear(); localStorage.clear();
+                window.location.replace("./index.html");
+            }
+        };
+
+        /* ═══════════════════════════════════════════════════════
+           MODAL OPEN / CLOSE
+        ═══════════════════════════════════════════════════════ */
+        window.openEnrollModal = function(courseName) {
+            _activeCourse = courseName;
+            document.getElementById("modalCourseName").textContent = courseName;
+            _resetModal();
+            document.getElementById("enrollModal").classList.add("open");
+            document.body.style.overflow = "hidden";
+        };
+        window.closeEnrollModal = function() {
+            document.getElementById("enrollModal").classList.remove("open");
+            document.body.style.overflow = "";
+        };
+        window._overlayClick = e => { if (e.target.id === "enrollModal") window.closeEnrollModal(); };
+        document.addEventListener("keydown", e => { if (e.key === "Escape") window.closeEnrollModal(); });
+
+        function _resetModal() {
+            document.getElementById("ef_name").value  = _user?.name  || "";
+            document.getElementById("ef_email").value = _user?.email || "";
+            document.getElementById("ef_dob").value   = "";
+            document.getElementById("ef_phone").value = "";
+            _hideAge(); _clearErrors(); _showAlert("", "");
+            const btn = document.getElementById("mSubmitBtn");
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Enrollment';
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           AGE CALCULATION
+        ═══════════════════════════════════════════════════════ */
+        const dobInput = document.getElementById("ef_dob");
+        dobInput.addEventListener("input",  _calcAge);
+        dobInput.addEventListener("change", _calcAge);
+
+        function _calcAge() {
+            const val = dobInput.value;
+            if (!val) { _hideAge(); return; }
+            const today = new Date(), birth = new Date(val);
+            if (isNaN(birth.getTime()) || birth > today) { _hideAge(); return; }
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+            if (age < 0 || age > 120) { _hideAge(); return; }
+            document.getElementById("ageVal").textContent = age;
+            document.getElementById("agePill").classList.add("show");
+        }
+        function _hideAge() {
+            document.getElementById("agePill").classList.remove("show");
+            document.getElementById("ageVal").textContent = "—";
+        }
+        function _getAge() {
+            const v = document.getElementById("ageVal").textContent;
+            return (v && v !== "—") ? parseInt(v, 10) : null;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           VALIDATION
+        ═══════════════════════════════════════════════════════ */
+        function _showErr(id, msg) {
+            const el = document.getElementById(id);
+            if (msg) el.querySelector("span").textContent = msg;
+            el.classList.add("show");
+            document.getElementById(id.replace("err_","ef_"))?.classList.add("has-error");
+        }
+        function _hideErr(id) {
+            document.getElementById(id)?.classList.remove("show");
+            document.getElementById(id.replace("err_","ef_"))?.classList.remove("has-error");
+        }
+        function _clearErrors() { ["name","dob","email","phone"].forEach(f => _hideErr("err_"+f)); }
+
+        function _validate() {
+            _clearErrors(); let ok = true;
+            const name  = document.getElementById("ef_name").value.trim();
+            const dob   = document.getElementById("ef_dob").value;
+            const email = document.getElementById("ef_email").value.trim();
+            const phone = document.getElementById("ef_phone").value.trim();
+            if (!name)  { _showErr("err_name","Full name is required."); ok=false; }
+            if (!dob)   { _showErr("err_dob","Date of birth is required."); ok=false; }
+            else { const b=new Date(dob); if(isNaN(b.getTime())||b>new Date()){_showErr("err_dob","Enter a valid past date.");ok=false;} }
+            if (!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){_showErr("err_email","Enter a valid email address.");ok=false;}
+            if (!phone||!/^\d{10}$/.test(phone)){_showErr("err_phone","Enter a valid 10-digit phone number.");ok=false;}
+            return ok;
+        }
+
+        function _showAlert(msg, type) {
+            const el = document.getElementById("mAlert");
+            if (!msg) { el.className="m-alert"; el.innerHTML=""; return; }
+            el.innerHTML=`<i class="fas fa-${type==="success"?"circle-check":"circle-exclamation"}"></i>${msg}`;
+            el.className=`m-alert show ${type}`;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FORM SUBMIT → FIRESTORE
+
+           Enrollment document structure (collection: "enrollments"):
+           ┌────────────────┬─────────────────────────────────────┐
+           │ userId         │ Firebase Auth UID (_uid)            │
+           │ userEmail      │ login email from session            │
+           │ courseName     │ e.g. "AutoCAD"                      │
+           │ fullName       │ from form                           │
+           │ dob            │ "YYYY-MM-DD"                        │
+           │ age            │ integer (auto-calculated)           │
+           │ email          │ from form                           │
+           │ phone          │ 10-digit string                     │
+           │ status         │ "pending" → admin sets "approved"   │
+           │ enrollmentDate │ serverTimestamp()                   │
+           └────────────────┴─────────────────────────────────────┘
+        ═══════════════════════════════════════════════════════ */
+        document.getElementById("enrollForm").addEventListener("submit", async e => {
+            e.preventDefault();
+            if (!_validate()) return;
+
+            const btn = document.getElementById("mSubmitBtn");
+            btn.disabled  = true;
+            btn.innerHTML = `<span class="btn-spin"></span> Submitting…`;
+
+            const payload = {
+                userId:         _uid,
+                userEmail:      _user.email,
+                courseName:     _activeCourse,
+                fullName:       document.getElementById("ef_name").value.trim(),
+                dob:            document.getElementById("ef_dob").value,
+                age:            _getAge(),
+                email:          document.getElementById("ef_email").value.trim(),
+                phone:          document.getElementById("ef_phone").value.trim(),
+                status:         "pending",
+                enrollmentDate: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "enrollments"), payload);
+                _showAlert(
+                    `✅ Enrolled in <strong>${_activeCourse}</strong>! Status is <em>Pending approval</em>.`,
+                    "success"
+                );
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Enrolled!';
+                setTimeout(() => window.closeEnrollModal(), 2100);
+            } catch (err) {
+                console.error("❌ Enrollment save error:", err);
+                _showAlert("Failed to save enrollment. Please try again.", "fail");
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Enrollment';
+            }
+        });
+
+        /* ── Start ──
+           FIX: <script type="module"> executes AFTER DOMContentLoaded has
+           already fired, so addEventListener("DOMContentLoaded") never
+           triggers. Guard with readyState instead. */
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initDashboard);
+        } else {
+            initDashboard();   // DOM is already ready — call directly
+        }
+
+    </script>
 </body>
 </html>
