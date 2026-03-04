@@ -807,6 +807,18 @@
             border: 2px solid rgba(239, 68, 68, 0.3);
             color: #dc2626;
         }
+
+        /* ✅ NEW: Email Verification Animations */
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         
         @keyframes fadeInUp {
             from {
@@ -925,7 +937,7 @@
         </div>
     </section>
     
-    <!-- Courses Section with REAL IMAGES -->
+    <!-- Courses Section -->
     <section class="courses-section">
         <h2 class="section-title">Our CAD & Civil Survey Courses</h2>
         <p class="section-subtitle">
@@ -936,7 +948,6 @@
             <!-- AutoCAD Course -->
             <div class="course-card" onclick="window.scrollToAuth('signup')">
                 <div class="course-image-container">
-                    <!-- REPLACE THIS URL with your AutoCAD workstation image -->
                     <img src="images/what-you-can-do-with-autocad-large-1650x1080.jpg" 
                          alt="AutoCAD Workstation" 
                          class="course-image"
@@ -960,7 +971,6 @@
             <!-- ETABS Course -->
             <div class="course-card" onclick="window.scrollToAuth('signup')">
                 <div class="course-image-container">
-                    <!-- REPLACE THIS URL with your ETABS structural analysis image -->
                     <img src="images/etabs-500x500.webp" 
                          alt="ETABS Structural Analysis" 
                          class="course-image"
@@ -984,7 +994,6 @@
             <!-- STAAD Pro Course -->
             <div class="course-card" onclick="window.scrollToAuth('signup')">
                 <div class="course-image-container">
-                    <!-- REPLACE THIS URL with your STAAD Pro steel structure image -->
                     <img src="images/STAAD.Pro_Physical-modeler-800x400-1.jpg" 
                          alt="STAAD Pro Steel Design" 
                          class="course-image"
@@ -1008,7 +1017,6 @@
             <!-- Revit Architecture Course -->
             <div class="course-card" onclick="window.scrollToAuth('signup')">
                 <div class="course-image-container">
-                    <!-- REPLACE THIS URL with your Revit BIM modeling image -->
                     <img src="images/WhatsApp Image 2026-02-16 at 11.51.50 PM.jpeg" 
                          alt="Revit BIM Architecture" 
                          class="course-image"
@@ -1032,7 +1040,6 @@
             <!-- Total Station Course -->
             <div class="course-card" onclick="window.scrollToAuth('signup')">
                 <div class="course-image-container">
-                    <!-- REPLACE THIS URL with your Total Station surveying equipment image -->
                     <img src="images/manual-total-stations-teaser1.jpeg" 
                          alt="Total Station Surveying Equipment" 
                          class="course-image"
@@ -1118,13 +1125,81 @@
                             </span>
                         </div>
                     </div>
+
+                    <!-- ✅ NEW: Forgot Password Link -->
+                    <div style="text-align: right; margin-bottom: 1.5rem;">
+                        <button type="button" 
+                                onclick="window.openPasswordReset()" 
+                                style="
+                                    background: none;
+                                    border: none;
+                                    color: var(--primary-blue);
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    font-size: 0.95rem;
+                                    padding: 0;
+                                    text-decoration: underline;
+                                    transition: opacity 0.2s;
+                                "
+                                onmouseover="this.style.opacity='0.8'"
+                                onmouseout="this.style.opacity='1'">
+                            🔑 Forgot Password?
+                        </button>
+                    </div>
                     
                     <button type="submit" class="submit-btn" id="signin-btn">
                         <i class="fas fa-sign-in-alt"></i> Sign In
                     </button>
+
+                    <!-- ✅ NEW: Resend Email Section -->
+                    <div id="resendEmailSection" style="
+                        display: none;
+                        margin-top: 1.5rem;
+                        padding: 1.25rem;
+                        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+                        border: 2px solid rgba(239, 68, 68, 0.3);
+                        border-radius: 12px;
+                        text-align: center;
+                        animation: slideDownFade 0.4s ease-out;
+                    ">
+                        <p style="
+                            color: #dc2626;
+                            font-weight: 600;
+                            margin-bottom: 1rem;
+                            font-size: 0.95rem;
+                        ">
+                            <i class="fas fa-info-circle"></i> Email not verified yet
+                        </p>
+                        <p style="
+                            color: var(--concrete-gray);
+                            margin-bottom: 1rem;
+                            font-size: 0.9rem;
+                            line-height: 1.5;
+                        ">
+                            Check your email for a verification link. Didn't receive it?
+                        </p>
+                        <button type="button" 
+                                onclick="window.resendVerificationEmail()" 
+                                style="
+                                    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+                                    color: white;
+                                    padding: 0.75rem 1.5rem;
+                                    border: none;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-weight: 600;
+                                    font-size: 0.95rem;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 25px rgba(79, 70, 229, 0.4)';"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(79, 70, 229, 0.3)';">
+                            <i class="fas fa-envelope"></i> Resend Verification Email
+                        </button>
+                    </div>
                 </form>
                 
-                <!-- Sign Up Form - FIXED LAYOUT -->
+                <!-- Sign Up Form -->
                 <form class="auth-form" id="signUpForm">
                     <h2 class="form-title">Create Your Account</h2>
                     <p class="form-subtitle">Join thousands of professionals advancing their careers</p>
@@ -1202,12 +1277,10 @@
                         </div>
                     </div>
                     
-                    <!-- SUBMIT BUTTON IMMEDIATELY AFTER FORM FIELDS -->
                     <button type="submit" class="submit-btn" id="signup-btn">
                         <i class="fas fa-user-plus"></i> Create Account
                     </button>
                     
-                    <!-- THEME IMAGES BELOW SUBMIT BUTTON -->
                     <div class="theme-images">
                         <div class="theme-image-item"><i class="fas fa-building"></i></div>
                         <div class="theme-image-item"><i class="fas fa-drafting-compass"></i></div>
@@ -1218,13 +1291,175 @@
                     </div>
                 </form>
             </div>
+
+            <!-- ✅ NEW: Password Reset Modal -->
+            <div id="passwordResetModal" style="
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.6);
+                z-index: 3000;
+                align-items: center;
+                justify-content: center;
+                backdrop-filter: blur(5px);
+            ">
+                <div style="
+                    background: white;
+                    border-radius: 20px;
+                    padding: 2.5rem;
+                    max-width: 450px;
+                    width: 90%;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    animation: slideUpFade 0.4s ease-out;
+                ">
+                    <button type="button" 
+                            onclick="window.closePasswordReset()" 
+                            style="
+                                position: absolute;
+                                top: 1rem;
+                                right: 1rem;
+                                background: none;
+                                border: none;
+                                font-size: 1.5rem;
+                                cursor: pointer;
+                                color: var(--concrete-gray);
+                                width: 40px;
+                                height: 40px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                border-radius: 50%;
+                                transition: all 0.2s;
+                            "
+                            onmouseover="this.style.background='rgba(79, 70, 229, 0.1)'; this.style.color='var(--primary-blue)';"
+                            onmouseout="this.style.background='none'; this.style.color='var(--concrete-gray)';">
+                        ✕
+                    </button>
+
+                    <h2 style="
+                        font-size: 1.8rem;
+                        font-weight: 700;
+                        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        margin-bottom: 1rem;
+                        text-align: center;
+                    ">
+                        🔐 Reset Your Password
+                    </h2>
+                    
+                    <p style="
+                        color: var(--concrete-gray);
+                        text-align: center;
+                        margin-bottom: 1.5rem;
+                        font-size: 0.95rem;
+                        line-height: 1.6;
+                    ">
+                        Enter your email address and we'll send you a secure link to reset your password.
+                    </p>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="form-label" for="resetEmail" style="display: block; margin-bottom: 0.5rem;">Email Address</label>
+                        <div class="input-wrapper" style="position: relative;">
+                            <input 
+                                type="email" 
+                                id="resetEmail" 
+                                placeholder="your.email@example.com" 
+                                required 
+                                style="
+                                    width: 100%;
+                                    padding: 1rem 1rem 1rem 2.5rem;
+                                    border: 2px solid #e5e7eb;
+                                    border-radius: 10px;
+                                    font-size: 1rem;
+                                    font-family: inherit;
+                                    transition: all 0.3s ease;
+                                "
+                                onfocus="this.style.borderColor='var(--accent-cyan)'; this.style.boxShadow='0 0 0 4px rgba(6, 182, 212, 0.15)';"
+                                onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"
+                            />
+                            <i class="fas fa-envelope" style="
+                                position: absolute;
+                                left: 1rem;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                color: var(--concrete-gray);
+                            "></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button 
+                            type="button" 
+                            onclick="window.resetPassword()" 
+                            style="
+                                flex: 1;
+                                padding: 1rem;
+                                background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+                                color: white;
+                                border: none;
+                                border-radius: 10px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 6px 25px rgba(79, 70, 229, 0.3);
+                            "
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 35px rgba(79, 70, 229, 0.4)';"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 25px rgba(79, 70, 229, 0.3)';">
+                            <i class="fas fa-paper-plane"></i> Send Reset Link
+                        </button>
+                        
+                        <button 
+                            type="button" 
+                            onclick="window.closePasswordReset()" 
+                            style="
+                                flex: 1;
+                                padding: 1rem;
+                                background: white;
+                                color: var(--primary-blue);
+                                border: 2px solid var(--primary-blue);
+                                border-radius: 10px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                            "
+                            onmouseover="this.style.background='var(--primary-blue)'; this.style.color='white';"
+                            onmouseout="this.style.background='white'; this.style.color='var(--primary-blue)';">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <p style="
+                        text-align: center;
+                        margin-top: 1.5rem;
+                        color: var(--concrete-gray);
+                        font-size: 0.85rem;
+                    ">
+                        We'll send a reset link to your email within minutes.<br>
+                        Check your spam folder if you don't see it.
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
     
-    <!-- Firebase v10 Modular SDK -->
+    <!-- ✅ Firebase v10 Modular SDK with Email Verification & Password Reset -->
     <script type="module">
         import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            signOut,
+            sendEmailVerification,
+            sendPasswordResetEmail
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -1248,7 +1483,9 @@
 
         let currentUserType = { signin: 'user', signup: 'user' };
 
-        // Expose functions to window for onclick handlers
+        // ================================================
+        // EXISTING FUNCTIONS
+        // ================================================
         window.scrollToAuth = function(tab) {
             document.getElementById('authSection').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => window.switchAuthTab(tab), 500);
@@ -1301,10 +1538,88 @@
                     ${message}
                 </div>
             `;
-            setTimeout(() => alertDiv.innerHTML = '', 5000);
+            if (type === 'success') {
+                setTimeout(() => alertDiv.innerHTML = '', 5000);
+            }
         }
 
-        // Sign In Handler
+        // ================================================
+        // ✅ NEW: PASSWORD RESET FUNCTIONS
+        // ================================================
+        window.openPasswordReset = function() {
+            document.getElementById('passwordResetModal').style.display = 'flex';
+            document.getElementById('resetEmail').focus();
+        };
+
+        window.closePasswordReset = function() {
+            document.getElementById('passwordResetModal').style.display = 'none';
+            document.getElementById('resetEmail').value = '';
+        };
+
+        window.resetPassword = async function() {
+            const resetEmail = document.getElementById('resetEmail').value.trim();
+
+            if (!resetEmail) {
+                showAlert('signin', '❌ Please enter your email address.', 'error');
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, resetEmail);
+                showAlert('signin', '✅ Password reset link sent! Check your email inbox and spam folder.', 'success');
+                window.closePasswordReset();
+            } catch (error) {
+                console.error('Password reset error:', error);
+                if (error.code === 'auth/user-not-found') {
+                    showAlert('signin', '❌ Email not found in our system.', 'error');
+                } else {
+                    showAlert('signin', '❌ Error: ' + error.message, 'error');
+                }
+            }
+        };
+
+        // Close modal on outside click
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('passwordResetModal');
+            if (event.target === modal) {
+                window.closePasswordReset();
+            }
+        });
+
+        // ================================================
+        // ✅ NEW: RESEND VERIFICATION EMAIL FUNCTION
+        // ================================================
+        window.resendVerificationEmail = async function() {
+            const pendingEmail = sessionStorage.getItem('pendingVerificationEmail');
+
+            if (!pendingEmail) {
+                showAlert('signin', '❌ Email not found. Please try signing in again.', 'error');
+                return;
+            }
+
+            try {
+                const password = prompt('Please enter your password to resend verification email:');
+                if (!password) return;
+
+                const tempCredential = await signInWithEmailAndPassword(auth, pendingEmail, password);
+                await sendEmailVerification(tempCredential.user);
+                await signOut(auth);
+                
+                showAlert('signin', '✅ Verification email resent! Check your inbox.', 'success');
+                document.getElementById('resendEmailSection').style.display = 'none';
+            } catch (error) {
+                console.error('Resend verification error:', error);
+                if (error.code === 'auth/wrong-password') {
+                    showAlert('signin', '❌ Incorrect password. Please try again.', 'error');
+                } else {
+                    showAlert('signin', '❌ Error: ' + error.message, 'error');
+                }
+            }
+        };
+
+        // ================================================
+        // ✅ UPDATED SIGN IN HANDLER - WITH EMAIL VERIFICATION CHECK
+        // ================================================
         document.getElementById('signInForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1314,20 +1629,35 @@
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+                const user = userCredential.user;
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
                 
                 if (!userDoc.exists()) {
+                    await signOut(auth);
                     throw new Error('User data not found');
                 }
 
                 const userData = userDoc.data();
                 
                 if (userData.userType !== userType) {
+                    await signOut(auth);
                     throw new Error(`Please select ${userData.userType === 'admin' ? 'Admin' : 'Student'} to login`);
                 }
 
+                // ✅ NEW: CHECK IF EMAIL IS VERIFIED
+                if (!user.emailVerified) {
+                    await signOut(auth);
+                    
+                    sessionStorage.setItem('pendingVerificationEmail', email);
+                    showAlert('signin', '❌ Please verify your email before logging in. We sent you a verification link.', 'error');
+                    document.getElementById('resendEmailSection').style.display = 'block';
+                    
+                    return;
+                }
+
+                // ✅ EMAIL IS VERIFIED - PROCEED WITH LOGIN
                 sessionStorage.setItem('currentUser', JSON.stringify({
-                    uid: userCredential.user.uid,
+                    uid: user.uid,
                     email: userData.email,
                     name: userData.name,
                     userType: userData.userType,
@@ -1335,7 +1665,7 @@
                     college: userData.college
                 }));
 
-                showAlert('signin', 'Login successful! Redirecting...', 'success');
+                showAlert('signin', '✅ Login successful! Redirecting...', 'success');
 
                 setTimeout(() => {
                     window.location.href = userType === 'admin' ? 'admin-dashboard.html' : 'user-dashboard.html';
@@ -1347,7 +1677,9 @@
             }
         });
 
-        // Sign Up Handler
+        // ================================================
+        // ✅ UPDATED SIGN UP HANDLER - WITH EMAIL VERIFICATION
+        // ================================================
         document.getElementById('signUpForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1367,6 +1699,10 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
+                // ✅ NEW: SEND VERIFICATION EMAIL
+                await sendEmailVerification(userCredential.user);
+
+                // Save user data to Firestore
                 const userData = {
                     uid: userCredential.user.uid,
                     name,
@@ -1383,24 +1719,23 @@
 
                 await setDoc(doc(db, 'users', userCredential.user.uid), userData);
 
-                sessionStorage.setItem('currentUser', JSON.stringify({
-                    uid: userCredential.user.uid,
-                    email,
-                    name,
-                    userType,
-                    phone,
-                    college
-                }));
+                // ✅ NEW: SIGN OUT USER IMMEDIATELY
+                await signOut(auth);
 
-                showAlert('signup', 'Account created successfully! Redirecting...', 'success');
+                // ✅ NEW: SHOW VERIFICATION MESSAGE
+                showAlert('signup', '✅ Account created! Verification email sent to ' + email + '. Please check your email and click the verification link before logging in.', 'success');
 
-                setTimeout(() => {
-                    window.location.href = userType === 'admin' ? 'admin-dashboard.html' : 'user-dashboard.html';
-                }, 1000);
+                // Clear form
+                document.getElementById('signUpForm').reset();
 
             } catch (error) {
                 console.error('Sign up error:', error);
-                showAlert('signup', error.message || 'Sign up failed', 'error');
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    showAlert('signup', 'This email is already registered. Please sign in instead.', 'error');
+                } else {
+                    showAlert('signup', error.message || 'Sign up failed', 'error');
+                }
             }
         });
 
