@@ -204,6 +204,20 @@
             transition: all 0.3s ease;
         }
         
+        /* ✅ NEW: Main Layout Container */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            min-height: 100vh;
+            transition: grid-template-columns 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 0;
+            position: relative;
+        }
+        
+        .main-layout.auth-visible {
+            grid-template-columns: 1fr 1fr;
+        }
+        
         /* Hero Section */
         .hero-section {
             min-height: 100vh;
@@ -215,6 +229,7 @@
             padding: 8rem 2rem 6rem;
             position: relative;
             z-index: 10;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .hero-content {
@@ -244,6 +259,59 @@
             max-width: 900px;
             margin-left: auto;
             margin-right: auto;
+        }
+        
+        /* ✅ NEW: Auth Panel Section */
+        .auth-panel-wrapper {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 20;
+            animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.5);
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+        
+        .auth-panel-wrapper.visible {
+            display: flex;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* ✅ NEW: Close Button for Mobile */
+        .auth-close-btn {
+            display: none;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 25;
+        }
+        
+        .auth-close-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         }
         
         /* Course Section */
@@ -832,6 +900,28 @@
         }
         
         /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-layout.auth-visible {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-panel-wrapper {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 100%;
+                height: 100vh;
+                z-index: 999;
+                background: white;
+                border-radius: 0;
+                padding-top: 6rem;
+            }
+            
+            .auth-close-btn {
+                display: flex;
+            }
+        }
+        
         @media (max-width: 968px) {
             .header {
                 padding: 1rem 1.5rem;
@@ -893,6 +983,18 @@
             .theme-images {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .auth-panel-wrapper {
+                padding: 2rem 1rem;
+            }
+            
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-title {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
@@ -918,24 +1020,401 @@
         </div>
     </header>
     
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-headline">Professional CAD & Civil Survey Training</h1>
-            <p class="hero-subtext">
-                Master the art of Computer-Aided Design and Civil Surveying with our comprehensive courses. 
-                Earn industry-recognized certifications upon completion and advance your career in civil engineering.
-            </p>
-            <div class="cta-buttons">
-                <button class="btn-primary" onclick="window.scrollToAuth('signin')">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
-                </button>
-                <button class="btn-secondary" onclick="window.scrollToAuth('signup')">
-                    <i class="fas fa-user-plus"></i> Sign Up
-                </button>
+    <!-- ✅ NEW: Main Layout Container -->
+    <div class="main-layout" id="mainLayout">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-headline">Professional CAD & Civil Survey Training</h1>
+                <p class="hero-subtext">
+                    Master the art of Computer-Aided Design and Civil Surveying with our comprehensive courses. 
+                    Earn industry-recognized certifications upon completion and advance your career in civil engineering.
+                </p>
+                <div class="cta-buttons">
+                    <button class="btn-primary" onclick="window.showAuthPanel('signin')">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                    <button class="btn-secondary" onclick="window.showAuthPanel('signup')">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ✅ NEW: Auth Panel Wrapper -->
+        <div class="auth-panel-wrapper" id="authPanelWrapper">
+            <button class="auth-close-btn" onclick="window.hideAuthPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Authentication Section (moved inside wrapper) -->
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="window.switchAuthTab('signin')">Sign In</div>
+                    <div class="auth-tab" onclick="window.switchAuthTab('signup')">Sign Up</div>
+                </div>
+                
+                <div class="auth-card">
+                    <!-- Sign In Form -->
+                    <form class="auth-form active" id="signInForm">
+                        <h2 class="form-title">Welcome Back</h2>
+                        <p class="form-subtitle">Sign in to access your training portal</p>
+                        
+                        <div id="signin-alert"></div>
+                        
+                        <div class="user-type-toggle">
+                            <div class="toggle-option active" data-type="user" onclick="window.selectUserType('signin', 'user')">
+                                <div class="toggle-icon"><i class="fas fa-user"></i></div>
+                                <div class="toggle-label">Student</div>
+                            </div>
+                            <div class="toggle-option" data-type="admin" onclick="window.selectUserType('signin', 'admin')">
+                                <div class="toggle-icon"><i class="fas fa-user-shield"></i></div>
+                                <div class="toggle-label">Admin</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="signin-email">Email</label>
+                            <div class="input-wrapper">
+                                <input type="email" id="signin-email" class="form-input" placeholder="Enter your email" required />
+                                <i class="fas fa-envelope input-icon"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="signin-password">Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="signin-password" class="form-input" placeholder="Enter your password" required />
+                                <i class="fas fa-lock input-icon"></i>
+                                <span class="password-toggle" onclick="window.togglePassword('signin-password', this)">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- ✅ NEW: Forgot Password Link -->
+                        <div style="text-align: right; margin-bottom: 1.5rem;">
+                            <button type="button" 
+                                    onclick="window.openPasswordReset()" 
+                                    style="
+                                        background: none;
+                                        border: none;
+                                        color: var(--primary-blue);
+                                        font-weight: 600;
+                                        cursor: pointer;
+                                        font-size: 0.95rem;
+                                        padding: 0;
+                                        text-decoration: underline;
+                                        transition: opacity 0.2s;
+                                    "
+                                    onmouseover="this.style.opacity='0.8'"
+                                    onmouseout="this.style.opacity='1'">
+                                🔑 Forgot Password?
+                            </button>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="signin-btn">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+
+                        <!-- ✅ NEW: Resend Email Section -->
+                        <div id="resendEmailSection" style="
+                            display: none;
+                            margin-top: 1.5rem;
+                            padding: 1.25rem;
+                            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+                            border: 2px solid rgba(239, 68, 68, 0.3);
+                            border-radius: 12px;
+                            text-align: center;
+                            animation: slideDownFade 0.4s ease-out;
+                        ">
+                            <p style="
+                                color: #dc2626;
+                                font-weight: 600;
+                                margin-bottom: 1rem;
+                                font-size: 0.95rem;
+                            ">
+                                <i class="fas fa-info-circle"></i> Email not verified yet
+                            </p>
+                            <p style="
+                                color: var(--concrete-gray);
+                                margin-bottom: 1rem;
+                                font-size: 0.9rem;
+                                line-height: 1.5;
+                            ">
+                                Check your email for a verification link. Didn't receive it?
+                            </p>
+                            <button type="button" 
+                                    onclick="window.resendVerificationEmail()" 
+                                    style="
+                                        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+                                        color: white;
+                                        padding: 0.75rem 1.5rem;
+                                        border: none;
+                                        border-radius: 8px;
+                                        cursor: pointer;
+                                        font-weight: 600;
+                                        font-size: 0.95rem;
+                                        transition: all 0.3s ease;
+                                        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+                                    "
+                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 25px rgba(79, 70, 229, 0.4)';"
+                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(79, 70, 229, 0.3)';">
+                                <i class="fas fa-envelope"></i> Resend Verification Email
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Sign Up Form -->
+                    <form class="auth-form" id="signUpForm">
+                        <h2 class="form-title">Create Your Account</h2>
+                        <p class="form-subtitle">Join thousands of professionals advancing their careers</p>
+                        
+                        <div id="signup-alert"></div>
+                        
+                        <div class="user-type-toggle">
+                            <div class="toggle-option active" data-type="user" onclick="window.selectUserType('signup', 'user')">
+                                <div class="toggle-icon"><i class="fas fa-user"></i></div>
+                                <div class="toggle-label">Student</div>
+                            </div>
+                            <div class="toggle-option" data-type="admin" onclick="window.selectUserType('signup', 'admin')">
+                                <div class="toggle-icon"><i class="fas fa-user-shield"></i></div>
+                                <div class="toggle-label">Admin</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="signup-name">Full Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="signup-name" class="form-input" placeholder="Enter your full name" required />
+                                    <i class="fas fa-user input-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="signup-phone">Phone Number</label>
+                                <div class="input-wrapper">
+                                    <input type="tel" id="signup-phone" class="form-input" placeholder="Enter your phone number" required />
+                                    <i class="fas fa-phone input-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="signup-email">Email</label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="signup-email" class="form-input" placeholder="Enter your email" required />
+                                    <i class="fas fa-envelope input-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" id="college-field">
+                                <label class="form-label" for="signup-college">College Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="signup-college" class="form-input" placeholder="Enter your college name" />
+                                    <i class="fas fa-university input-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="signup-password">Password</label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required />
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <span class="password-toggle" onclick="window.togglePassword('signup-password', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="signup-confirm-password">Confirm Password</label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="signup-confirm-password" class="form-input" placeholder="Confirm your password" required />
+                                    <i class="fas fa-lock input-icon"></i>
+                                    <span class="password-toggle" onclick="window.togglePassword('signup-confirm-password', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="signup-btn">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                        
+                        <div class="theme-images">
+                            <div class="theme-image-item"><i class="fas fa-building"></i></div>
+                            <div class="theme-image-item"><i class="fas fa-drafting-compass"></i></div>
+                            <div class="theme-image-item"><i class="fas fa-hard-hat"></i></div>
+                            <div class="theme-image-item"><i class="fas fa-ruler-combined"></i></div>
+                            <div class="theme-image-item"><i class="fas fa-tools"></i></div>
+                            <div class="theme-image-item"><i class="fas fa-map-marked-alt"></i></div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ✅ NEW: Password Reset Modal -->
+                <div id="passwordResetModal" style="
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.6);
+                    z-index: 3000;
+                    align-items: center;
+                    justify-content: center;
+                    backdrop-filter: blur(5px);
+                ">
+                    <div style="
+                        background: white;
+                        border-radius: 20px;
+                        padding: 2.5rem;
+                        max-width: 450px;
+                        width: 90%;
+                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                        animation: slideUpFade 0.4s ease-out;
+                    ">
+                        <button type="button" 
+                                onclick="window.closePasswordReset()" 
+                                style="
+                                    position: absolute;
+                                    top: 1rem;
+                                    right: 1rem;
+                                    background: none;
+                                    border: none;
+                                    font-size: 1.5rem;
+                                    cursor: pointer;
+                                    color: var(--concrete-gray);
+                                    width: 40px;
+                                    height: 40px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    border-radius: 50%;
+                                    transition: all 0.2s;
+                                "
+                                onmouseover="this.style.background='rgba(79, 70, 229, 0.1)'; this.style.color='var(--primary-blue)';"
+                                onmouseout="this.style.background='none'; this.style.color='var(--concrete-gray)';">
+                            ✕
+                        </button>
+
+                        <h2 style="
+                            font-size: 1.8rem;
+                            font-weight: 700;
+                            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            background-clip: text;
+                            margin-bottom: 1rem;
+                            text-align: center;
+                        ">
+                            🔐 Reset Your Password
+                        </h2>
+                        
+                        <p style="
+                            color: var(--concrete-gray);
+                            text-align: center;
+                            margin-bottom: 1.5rem;
+                            font-size: 0.95rem;
+                            line-height: 1.6;
+                        ">
+                            Enter your email address and we'll send you a secure link to reset your password.
+                        </p>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label" for="resetEmail" style="display: block; margin-bottom: 0.5rem;">Email Address</label>
+                            <div class="input-wrapper" style="position: relative;">
+                                <input 
+                                    type="email" 
+                                    id="resetEmail" 
+                                    placeholder="your.email@example.com" 
+                                    required 
+                                    style="
+                                        width: 100%;
+                                        padding: 1rem 1rem 1rem 2.5rem;
+                                        border: 2px solid #e5e7eb;
+                                        border-radius: 10px;
+                                        font-size: 1rem;
+                                        font-family: inherit;
+                                        transition: all 0.3s ease;
+                                    "
+                                    onfocus="this.style.borderColor='var(--accent-cyan)'; this.style.boxShadow='0 0 0 4px rgba(6, 182, 212, 0.15)';"
+                                    onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"
+                                />
+                                <i class="fas fa-envelope" style="
+                                    position: absolute;
+                                    left: 1rem;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    color: var(--concrete-gray);
+                                "></i>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button 
+                                type="button" 
+                                onclick="window.resetPassword()" 
+                                style="
+                                    flex: 1;
+                                    padding: 1rem;
+                                    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+                                    color: white;
+                                    border: none;
+                                    border-radius: 10px;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    font-size: 1rem;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 6px 25px rgba(79, 70, 229, 0.3);
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 35px rgba(79, 70, 229, 0.4)';"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 25px rgba(79, 70, 229, 0.3)';">
+                                <i class="fas fa-paper-plane"></i> Send Reset Link
+                            </button>
+                            
+                            <button 
+                                type="button" 
+                                onclick="window.closePasswordReset()" 
+                                style="
+                                    flex: 1;
+                                    padding: 1rem;
+                                    background: white;
+                                    color: var(--primary-blue);
+                                    border: 2px solid var(--primary-blue);
+                                    border-radius: 10px;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    font-size: 1rem;
+                                    transition: all 0.3s ease;
+                                "
+                                onmouseover="this.style.background='var(--primary-blue)'; this.style.color='white';"
+                                onmouseout="this.style.background='white'; this.style.color='var(--primary-blue)';">
+                                Cancel
+                            </button>
+                        </div>
+
+                        <p style="
+                            text-align: center;
+                            margin-top: 1.5rem;
+                            color: var(--concrete-gray);
+                            font-size: 0.85rem;
+                        ">
+                            We'll send a reset link to your email within minutes.<br>
+                            Check your spam folder if you don't see it.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
     
     <!-- Courses Section -->
     <section class="courses-section">
@@ -946,7 +1425,7 @@
         
         <div class="courses-grid">
             <!-- AutoCAD Course -->
-            <div class="course-card" onclick="window.scrollToAuth('signup')">
+            <div class="course-card" onclick="window.showAuthPanel('signup')">
                 <div class="course-image-container">
                     <img src="images/what-you-can-do-with-autocad-large-1650x1080.jpg" 
                          alt="AutoCAD Workstation" 
@@ -969,7 +1448,7 @@
             </div>
             
             <!-- ETABS Course -->
-            <div class="course-card" onclick="window.scrollToAuth('signup')">
+            <div class="course-card" onclick="window.showAuthPanel('signup')">
                 <div class="course-image-container">
                     <img src="images/etabs-500x500.webp" 
                          alt="ETABS Structural Analysis" 
@@ -992,7 +1471,7 @@
             </div>
             
             <!-- STAAD Pro Course -->
-            <div class="course-card" onclick="window.scrollToAuth('signup')">
+            <div class="course-card" onclick="window.showAuthPanel('signup')">
                 <div class="course-image-container">
                     <img src="images/STAAD.Pro_Physical-modeler-800x400-1.jpg" 
                          alt="STAAD Pro Steel Design" 
@@ -1015,7 +1494,7 @@
             </div>
             
             <!-- Revit Architecture Course -->
-            <div class="course-card" onclick="window.scrollToAuth('signup')">
+            <div class="course-card" onclick="window.showAuthPanel('signup')">
                 <div class="course-image-container">
                     <img src="images/WhatsApp Image 2026-02-16 at 11.51.50 PM.jpeg" 
                          alt="Revit BIM Architecture" 
@@ -1038,7 +1517,7 @@
             </div>
             
             <!-- Total Station Course -->
-            <div class="course-card" onclick="window.scrollToAuth('signup')">
+            <div class="course-card" onclick="window.showAuthPanel('signup')">
                 <div class="course-image-container">
                     <img src="images/manual-total-stations-teaser1.jpeg" 
                          alt="Total Station Surveying Equipment" 
@@ -1080,375 +1559,6 @@
         </div>
     </section>
     
-    <!-- Authentication Section -->
-    <section class="auth-section" id="authSection">
-        <div class="auth-container">
-            <div class="auth-tabs">
-                <div class="auth-tab active" onclick="window.switchAuthTab('signin')">Sign In</div>
-                <div class="auth-tab" onclick="window.switchAuthTab('signup')">Sign Up</div>
-            </div>
-            
-            <div class="auth-card">
-                <!-- Sign In Form -->
-                <form class="auth-form active" id="signInForm">
-                    <h2 class="form-title">Welcome Back</h2>
-                    <p class="form-subtitle">Sign in to access your training portal</p>
-                    
-                    <div id="signin-alert"></div>
-                    
-                    <div class="user-type-toggle">
-                        <div class="toggle-option active" data-type="user" onclick="window.selectUserType('signin', 'user')">
-                            <div class="toggle-icon"><i class="fas fa-user"></i></div>
-                            <div class="toggle-label">Student</div>
-                        </div>
-                        <div class="toggle-option" data-type="admin" onclick="window.selectUserType('signin', 'admin')">
-                            <div class="toggle-icon"><i class="fas fa-user-shield"></i></div>
-                            <div class="toggle-label">Admin</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="signin-email">Email</label>
-                        <div class="input-wrapper">
-                            <input type="email" id="signin-email" class="form-input" placeholder="Enter your email" required />
-                            <i class="fas fa-envelope input-icon"></i>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="signin-password">Password</label>
-                        <div class="input-wrapper">
-                            <input type="password" id="signin-password" class="form-input" placeholder="Enter your password" required />
-                            <i class="fas fa-lock input-icon"></i>
-                            <span class="password-toggle" onclick="window.togglePassword('signin-password', this)">
-                                <i class="fas fa-eye"></i>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- ✅ NEW: Forgot Password Link -->
-                    <div style="text-align: right; margin-bottom: 1.5rem;">
-                        <button type="button" 
-                                onclick="window.openPasswordReset()" 
-                                style="
-                                    background: none;
-                                    border: none;
-                                    color: var(--primary-blue);
-                                    font-weight: 600;
-                                    cursor: pointer;
-                                    font-size: 0.95rem;
-                                    padding: 0;
-                                    text-decoration: underline;
-                                    transition: opacity 0.2s;
-                                "
-                                onmouseover="this.style.opacity='0.8'"
-                                onmouseout="this.style.opacity='1'">
-                            🔑 Forgot Password?
-                        </button>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn" id="signin-btn">
-                        <i class="fas fa-sign-in-alt"></i> Sign In
-                    </button>
-
-                    <!-- ✅ NEW: Resend Email Section -->
-                    <div id="resendEmailSection" style="
-                        display: none;
-                        margin-top: 1.5rem;
-                        padding: 1.25rem;
-                        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
-                        border: 2px solid rgba(239, 68, 68, 0.3);
-                        border-radius: 12px;
-                        text-align: center;
-                        animation: slideDownFade 0.4s ease-out;
-                    ">
-                        <p style="
-                            color: #dc2626;
-                            font-weight: 600;
-                            margin-bottom: 1rem;
-                            font-size: 0.95rem;
-                        ">
-                            <i class="fas fa-info-circle"></i> Email not verified yet
-                        </p>
-                        <p style="
-                            color: var(--concrete-gray);
-                            margin-bottom: 1rem;
-                            font-size: 0.9rem;
-                            line-height: 1.5;
-                        ">
-                            Check your email for a verification link. Didn't receive it?
-                        </p>
-                        <button type="button" 
-                                onclick="window.resendVerificationEmail()" 
-                                style="
-                                    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
-                                    color: white;
-                                    padding: 0.75rem 1.5rem;
-                                    border: none;
-                                    border-radius: 8px;
-                                    cursor: pointer;
-                                    font-weight: 600;
-                                    font-size: 0.95rem;
-                                    transition: all 0.3s ease;
-                                    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-                                "
-                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 25px rgba(79, 70, 229, 0.4)';"
-                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(79, 70, 229, 0.3)';">
-                            <i class="fas fa-envelope"></i> Resend Verification Email
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Sign Up Form -->
-                <form class="auth-form" id="signUpForm">
-                    <h2 class="form-title">Create Your Account</h2>
-                    <p class="form-subtitle">Join thousands of professionals advancing their careers</p>
-                    
-                    <div id="signup-alert"></div>
-                    
-                    <div class="user-type-toggle">
-                        <div class="toggle-option active" data-type="user" onclick="window.selectUserType('signup', 'user')">
-                            <div class="toggle-icon"><i class="fas fa-user"></i></div>
-                            <div class="toggle-label">Student</div>
-                        </div>
-                        <div class="toggle-option" data-type="admin" onclick="window.selectUserType('signup', 'admin')">
-                            <div class="toggle-icon"><i class="fas fa-user-shield"></i></div>
-                            <div class="toggle-label">Admin</div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="signup-name">Full Name</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="signup-name" class="form-input" placeholder="Enter your full name" required />
-                                <i class="fas fa-user input-icon"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="signup-phone">Phone Number</label>
-                            <div class="input-wrapper">
-                                <input type="tel" id="signup-phone" class="form-input" placeholder="Enter your phone number" required />
-                                <i class="fas fa-phone input-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="signup-email">Email</label>
-                            <div class="input-wrapper">
-                                <input type="email" id="signup-email" class="form-input" placeholder="Enter your email" required />
-                                <i class="fas fa-envelope input-icon"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group" id="college-field">
-                            <label class="form-label" for="signup-college">College Name</label>
-                            <div class="input-wrapper">
-                                <input type="text" id="signup-college" class="form-input" placeholder="Enter your college name" />
-                                <i class="fas fa-university input-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label" for="signup-password">Password</label>
-                            <div class="input-wrapper">
-                                <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required />
-                                <i class="fas fa-lock input-icon"></i>
-                                <span class="password-toggle" onclick="window.togglePassword('signup-password', this)">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="signup-confirm-password">Confirm Password</label>
-                            <div class="input-wrapper">
-                                <input type="password" id="signup-confirm-password" class="form-input" placeholder="Confirm your password" required />
-                                <i class="fas fa-lock input-icon"></i>
-                                <span class="password-toggle" onclick="window.togglePassword('signup-confirm-password', this)">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn" id="signup-btn">
-                        <i class="fas fa-user-plus"></i> Create Account
-                    </button>
-                    
-                    <div class="theme-images">
-                        <div class="theme-image-item"><i class="fas fa-building"></i></div>
-                        <div class="theme-image-item"><i class="fas fa-drafting-compass"></i></div>
-                        <div class="theme-image-item"><i class="fas fa-hard-hat"></i></div>
-                        <div class="theme-image-item"><i class="fas fa-ruler-combined"></i></div>
-                        <div class="theme-image-item"><i class="fas fa-tools"></i></div>
-                        <div class="theme-image-item"><i class="fas fa-map-marked-alt"></i></div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- ✅ NEW: Password Reset Modal -->
-            <div id="passwordResetModal" style="
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.6);
-                z-index: 3000;
-                align-items: center;
-                justify-content: center;
-                backdrop-filter: blur(5px);
-            ">
-                <div style="
-                    background: white;
-                    border-radius: 20px;
-                    padding: 2.5rem;
-                    max-width: 450px;
-                    width: 90%;
-                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                    animation: slideUpFade 0.4s ease-out;
-                ">
-                    <button type="button" 
-                            onclick="window.closePasswordReset()" 
-                            style="
-                                position: absolute;
-                                top: 1rem;
-                                right: 1rem;
-                                background: none;
-                                border: none;
-                                font-size: 1.5rem;
-                                cursor: pointer;
-                                color: var(--concrete-gray);
-                                width: 40px;
-                                height: 40px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                border-radius: 50%;
-                                transition: all 0.2s;
-                            "
-                            onmouseover="this.style.background='rgba(79, 70, 229, 0.1)'; this.style.color='var(--primary-blue)';"
-                            onmouseout="this.style.background='none'; this.style.color='var(--concrete-gray)';">
-                        ✕
-                    </button>
-
-                    <h2 style="
-                        font-size: 1.8rem;
-                        font-weight: 700;
-                        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                        background-clip: text;
-                        margin-bottom: 1rem;
-                        text-align: center;
-                    ">
-                        🔐 Reset Your Password
-                    </h2>
-                    
-                    <p style="
-                        color: var(--concrete-gray);
-                        text-align: center;
-                        margin-bottom: 1.5rem;
-                        font-size: 0.95rem;
-                        line-height: 1.6;
-                    ">
-                        Enter your email address and we'll send you a secure link to reset your password.
-                    </p>
-
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label class="form-label" for="resetEmail" style="display: block; margin-bottom: 0.5rem;">Email Address</label>
-                        <div class="input-wrapper" style="position: relative;">
-                            <input 
-                                type="email" 
-                                id="resetEmail" 
-                                placeholder="your.email@example.com" 
-                                required 
-                                style="
-                                    width: 100%;
-                                    padding: 1rem 1rem 1rem 2.5rem;
-                                    border: 2px solid #e5e7eb;
-                                    border-radius: 10px;
-                                    font-size: 1rem;
-                                    font-family: inherit;
-                                    transition: all 0.3s ease;
-                                "
-                                onfocus="this.style.borderColor='var(--accent-cyan)'; this.style.boxShadow='0 0 0 4px rgba(6, 182, 212, 0.15)';"
-                                onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"
-                            />
-                            <i class="fas fa-envelope" style="
-                                position: absolute;
-                                left: 1rem;
-                                top: 50%;
-                                transform: translateY(-50%);
-                                color: var(--concrete-gray);
-                            "></i>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 1rem;">
-                        <button 
-                            type="button" 
-                            onclick="window.resetPassword()" 
-                            style="
-                                flex: 1;
-                                padding: 1rem;
-                                background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
-                                color: white;
-                                border: none;
-                                border-radius: 10px;
-                                font-weight: 600;
-                                cursor: pointer;
-                                font-size: 1rem;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 6px 25px rgba(79, 70, 229, 0.3);
-                            "
-                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 35px rgba(79, 70, 229, 0.4)';"
-                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 25px rgba(79, 70, 229, 0.3)';">
-                            <i class="fas fa-paper-plane"></i> Send Reset Link
-                        </button>
-                        
-                        <button 
-                            type="button" 
-                            onclick="window.closePasswordReset()" 
-                            style="
-                                flex: 1;
-                                padding: 1rem;
-                                background: white;
-                                color: var(--primary-blue);
-                                border: 2px solid var(--primary-blue);
-                                border-radius: 10px;
-                                font-weight: 600;
-                                cursor: pointer;
-                                font-size: 1rem;
-                                transition: all 0.3s ease;
-                            "
-                            onmouseover="this.style.background='var(--primary-blue)'; this.style.color='white';"
-                            onmouseout="this.style.background='white'; this.style.color='var(--primary-blue)';">
-                            Cancel
-                        </button>
-                    </div>
-
-                    <p style="
-                        text-align: center;
-                        margin-top: 1.5rem;
-                        color: var(--concrete-gray);
-                        font-size: 0.85rem;
-                    ">
-                        We'll send a reset link to your email within minutes.<br>
-                        Check your spam folder if you don't see it.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
     <!-- ✅ Firebase v10 Modular SDK with Email Verification & Password Reset -->
     <script type="module">
         import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -1484,13 +1594,22 @@
         let currentUserType = { signin: 'user', signup: 'user' };
 
         // ================================================
-        // EXISTING FUNCTIONS
+        // ✅ NEW: AUTH PANEL VISIBILITY FUNCTIONS
         // ================================================
-        window.scrollToAuth = function(tab) {
-            document.getElementById('authSection').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => window.switchAuthTab(tab), 500);
+        window.showAuthPanel = function(tab) {
+            document.getElementById('mainLayout').classList.add('auth-visible');
+            document.getElementById('authPanelWrapper').classList.add('visible');
+            window.switchAuthTab(tab);
         };
 
+        window.hideAuthPanel = function() {
+            document.getElementById('mainLayout').classList.remove('auth-visible');
+            document.getElementById('authPanelWrapper').classList.remove('visible');
+        };
+
+        // ================================================
+        // EXISTING FUNCTIONS
+        // ================================================
         window.switchAuthTab = function(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
