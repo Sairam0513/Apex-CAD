@@ -266,7 +266,6 @@
             box-shadow: 0 15px 50px rgba(79, 70, 229, 0.2);
         }
         
-        /* ✅ Total Students Card - Clickable */
         .stat-card.clickable {
             cursor: pointer;
         }
@@ -276,7 +275,6 @@
             box-shadow: 0 15px 50px rgba(79, 70, 229, 0.2);
         }
         
-        /* Course Card Specific */
         .course-card {
             cursor: pointer;
         }
@@ -367,7 +365,6 @@
             color: var(--concrete-gray);
         }
         
-        /* Back Button */
         .back-btn {
             padding: 0.75rem 1.5rem;
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
@@ -547,6 +544,213 @@
         .btn-reject:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+        
+        /* ✅ NEW: Certificate Upload/View Buttons */
+        .btn-upload-cert,
+        .btn-view-cert {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+        
+        .btn-upload-cert {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            color: var(--primary-blue);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-upload-cert:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        
+        .btn-upload-cert:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: var(--concrete-gray);
+        }
+        
+        .btn-view-cert {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(74, 222, 128, 0.1) 100%);
+            color: var(--success-green);
+            border: 1px solid rgba(22, 163, 74, 0.3);
+        }
+        
+        .btn-view-cert:hover {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(74, 222, 128, 0.2) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+        }
+        
+        /* ✅ NEW: Certificate Upload Modal */
+        .certificate-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .certificate-modal.active {
+            display: flex;
+        }
+        
+        .certificate-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUpFade 0.4s ease-out;
+        }
+        
+        .certificate-modal-content h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .certificate-modal-content p {
+            color: var(--concrete-gray);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 2rem;
+            border: 2px dashed var(--primary-blue);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);
+        }
+        
+        .file-input-label:hover {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        }
+        
+        .file-input-label i {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-input-label span {
+            font-weight: 600;
+            color: var(--primary-blue);
+            display: block;
+            font-size: 0.95rem;
+        }
+        
+        .file-input-label small {
+            color: var(--concrete-gray);
+            display: block;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        
+        #certificateFileInput {
+            display: none;
+        }
+        
+        .file-name-display {
+            text-align: center;
+            color: var(--success-green);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        
+        .file-name-display.show {
+            display: block;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-upload-submit {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-upload-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
+        }
+        
+        .btn-upload-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-modal-cancel {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .btn-modal-cancel:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         /* Toast Notification */
@@ -851,11 +1055,12 @@
                             <th>Phone</th>
                             <th>Enrollment Date</th>
                             <th>Status</th>
+                            <th>Certificate</th>
                         </tr>
                     </thead>
                     <tbody id="courseStudentsTableBody">
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <div class="loading-container">
                                     <div class="loading-spinner"></div>
                                     <p style="margin-top: 1rem; color: var(--concrete-gray);">Loading students...</p>
@@ -867,6 +1072,41 @@
             </div>
         </section>
     </main>
+    
+    <!-- ✅ NEW: Certificate Upload Modal -->
+    <div class="certificate-modal" id="certificateModal">
+        <div class="certificate-modal-content">
+            <h2>Upload Certificate</h2>
+            <p id="certificateModalSubtitle">Upload a certificate for this student</p>
+            
+            <div class="file-input-wrapper">
+                <label class="file-input-label" for="certificateFileInput">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Click to upload or drag & drop</span>
+                    <small>PDF, PNG, or JPG (Max 5MB)</small>
+                </label>
+                <input 
+                    type="file" 
+                    id="certificateFileInput" 
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    onchange="window.handleCertificateFileSelect()"
+                />
+            </div>
+            
+            <div class="file-name-display" id="fileNameDisplay">
+                <i class="fas fa-check-circle"></i> <span id="selectedFileName"></span>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn-upload-submit" id="uploadCertificateBtn" onclick="window.uploadCertificateFile()" disabled>
+                    <i class="fas fa-upload"></i> Upload Certificate
+                </button>
+                <button class="btn-modal-cancel" onclick="window.closeCertificateModal()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
     
     <!-- Firebase v10 Modular SDK -->
     <script type="module">
@@ -882,6 +1122,7 @@
             updateDoc,
             doc
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -905,11 +1146,18 @@
 
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let allEnrollments = [];
         let courseCounts = {};
         let _unsubEnrollments = null;
         let currentSelectedCourse = null;
+
+        // ✅ NEW: Certificate upload variables
+        let pendingCertificateEnrollmentId = null;
+        let pendingCertificateEmail = null;
+        let pendingCertificateCourseName = null;
+        let selectedCertificateFile = null;
 
         // Courses List
         const COURSES = [
@@ -956,21 +1204,30 @@
             }
         }
 
-        // Load Total Students
+        // ✅ FIXED: Load Total Students from Enrollments Collection
         async function loadTotalStudents() {
             try {
-                console.log('📥 Fetching total students...');
+                console.log('📥 Fetching total students from enrollments...');
                 
-                const usersCollection = collection(db, 'users');
-                const q = query(usersCollection, where('userType', '==', 'user'));
-                const querySnapshot = await getDocs(q);
+                const enrollmentsCollection = collection(db, 'enrollments');
+                const enrollmentsSnapshot = await getDocs(enrollmentsCollection);
                 
-                document.getElementById('totalStudents').textContent = querySnapshot.size;
+                const uniqueStudents = new Set();
+                enrollmentsSnapshot.forEach((doc) => {
+                    const enrollment = doc.data();
+                    if (enrollment.email) {
+                        uniqueStudents.add(enrollment.email);
+                    }
+                });
                 
-                console.log(`✅ Total students: ${querySnapshot.size}`);
+                const totalStudents = uniqueStudents.size;
+                document.getElementById('totalStudents').textContent = totalStudents;
+                
+                console.log(`✅ Total unique students from enrollments: ${totalStudents}`);
                 
             } catch (error) {
                 console.error('❌ Error loading students:', error);
+                document.getElementById('totalStudents').textContent = '0';
             }
         }
 
@@ -1022,10 +1279,7 @@
                     
                     console.log(`📥 Total enrollments: ${allEnrollments.length}`);
                     
-                    // Update course counts
                     updateCourseCounts();
-                    
-                    // ✅ CHANGED: Display ALL enrollments (not just pending)
                     displayEnrollments(allEnrollments);
                     
                 }, (error) => {
@@ -1037,24 +1291,34 @@
             }
         }
 
-        // Update Course Counts (approved only)
+        // ✅ FIXED: Update Course Counts with case-insensitive matching
         function updateCourseCounts() {
-            // Reset all counts
             COURSES.forEach(course => {
                 courseCounts[course.name] = 0;
             });
             
-            // Count approved students per course
+            const courseNameMap = {};
+            COURSES.forEach(course => {
+                courseNameMap[course.name.toLowerCase().trim()] = course.name;
+            });
+            
+            console.log('📊 Course name map:', courseNameMap);
+            
             allEnrollments.forEach(enrollment => {
                 if ((enrollment.status || '').toLowerCase() === 'approved') {
-                    const courseName = enrollment.courseName;
-                    if (courseCounts.hasOwnProperty(courseName)) {
-                        courseCounts[courseName]++;
+                    const enrollmentCourseName = enrollment.courseName;
+                    if (enrollmentCourseName) {
+                        const normalizedName = enrollmentCourseName.toLowerCase().trim();
+                        const actualCourseName = courseNameMap[normalizedName];
+                        
+                        if (actualCourseName && courseCounts.hasOwnProperty(actualCourseName)) {
+                            courseCounts[actualCourseName]++;
+                            console.log(`✅ Matched: "${enrollmentCourseName}" → "${actualCourseName}": ${courseCounts[actualCourseName]}`);
+                        }
                     }
                 }
             });
             
-            // Update UI
             COURSES.forEach(course => {
                 const countElement = document.getElementById(`count-${course.name}`);
                 if (countElement) {
@@ -1062,10 +1326,10 @@
                 }
             });
             
-            console.log('✅ Course counts updated:', courseCounts);
+            console.log('✅ Final course counts:', courseCounts);
         }
 
-        // ✅ CHANGED: Display ALL Enrollments with conditional action buttons
+        // Display ALL Enrollments with conditional action buttons
         function displayEnrollments(enrollments) {
             const tbody = document.getElementById('enrollmentsTableBody');
             
@@ -1088,7 +1352,6 @@
                 let statusHtml = '';
                 let actionHtml = '';
                 
-                // ✅ CHANGED: Conditional rendering based on status
                 if (status === 'pending') {
                     statusHtml = `<span class="status-badge status-pending"><i class="fas fa-clock"></i> Pending</span>`;
                     actionHtml = `
@@ -1178,21 +1441,20 @@
             }
         };
 
-        // ✅ NEW: View Course-Specific Students
+        // View Course-Specific Students
+        // ✅ FIXED: viewCourseStudents with case-insensitive course name matching
         window.viewCourseStudents = function(courseName) {
             currentSelectedCourse = courseName;
             
-            // Hide enrollments section, show course students
             document.getElementById('enrollmentsSection').style.display = 'none';
             document.getElementById('courseStudentsSection').style.display = 'block';
             document.getElementById('backBtn').classList.add('active');
             
-            // Update course title
             document.getElementById('courseTitle').textContent = `${courseName} - Approved Students`;
             
-            // Get approved students for this course
+            // ✅ Case-insensitive comparison for course name matching
             const courseStudents = allEnrollments.filter(e => 
-                e.courseName === courseName && 
+                (e.courseName || '').toLowerCase().trim() === courseName.toLowerCase().trim() && 
                 (e.status || '').toLowerCase() === 'approved'
             );
             
@@ -1200,14 +1462,14 @@
             console.log(`✅ Viewing ${courseName} students: ${courseStudents.length}`);
         };
 
-        // Display Course-Specific Students
+        // ✅ NEW: Display Course-Specific Students WITH Certificate Upload Column
         function displayCourseStudents(students) {
             const tbody = document.getElementById('courseStudentsTableBody');
             
             if (students.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5">
+                        <td colspan="6">
                             <div class="no-users">
                                 <i class="fas fa-users"></i>
                                 <p>No approved students in this course yet.</p>
@@ -1227,6 +1489,33 @@
                     })
                     : 'N/A';
                 
+                // ✅ NEW: Certificate button logic
+                let certificateHtml = '';
+                if ((student.status || '').toLowerCase() === 'approved') {
+                    if (student.certificateURL) {
+                        // ✅ Certificate already uploaded - Show View button
+                        certificateHtml = `
+                            <button class="btn-view-cert" onclick="window.viewCertificate('${student.certificateURL}')">
+                                <i class="fas fa-file-download"></i> View Certificate
+                            </button>
+                        `;
+                    } else {
+                        // ✅ Certificate not uploaded - Show Upload button
+                        certificateHtml = `
+                            <button class="btn-upload-cert" onclick="window.openCertificateUpload('${student.id}', '${escapeHtml(student.email)}', '${escapeHtml(currentSelectedCourse)}')">
+                                <i class="fas fa-upload"></i> Upload Certificate
+                            </button>
+                        `;
+                    }
+                } else {
+                    // ✅ Not approved - Disable button
+                    certificateHtml = `
+                        <button class="btn-upload-cert" disabled title="Only approved students can receive certificates">
+                            <i class="fas fa-lock"></i> Locked
+                        </button>
+                    `;
+                }
+                
                 return `
                     <tr>
                         <td style="font-weight: 600;">${escapeHtml(student.fullName || 'N/A')}</td>
@@ -1234,23 +1523,22 @@
                         <td>${escapeHtml(student.phone || 'N/A')}</td>
                         <td>${enrollmentDate}</td>
                         <td><span class="status-badge status-approved"><i class="fas fa-check-circle"></i> Approved</span></td>
+                        <td>${certificateHtml}</td>
                     </tr>
                 `;
             }).join('');
         }
 
-        // ✅ CHANGED: Back to Requests now shows ALL enrollments
+        // Back to Requests
         window.backToRequests = function() {
             currentSelectedCourse = null;
             
-            // Hide course students, show enrollments
             document.getElementById('courseStudentsSection').style.display = 'none';
             document.getElementById('enrollmentsSection').style.display = 'block';
             document.getElementById('backBtn').classList.remove('active');
             document.getElementById('courseSearchInput').value = '';
             document.getElementById('searchInput').value = '';
             
-            // Display all enrollments again
             displayEnrollments(allEnrollments);
             
             console.log('✅ Back to all enrollments');
@@ -1272,11 +1560,13 @@
         };
 
         // Filter Course Students
+        // ✅ FIXED: filterCourseStudents with case-insensitive course name matching
         window.filterCourseStudents = function() {
             const searchTerm = document.getElementById('courseSearchInput').value.toLowerCase();
             
+            // ✅ Case-insensitive comparison for course name matching
             const courseStudents = allEnrollments.filter(e => 
-                e.courseName === currentSelectedCourse && 
+                (e.courseName || '').toLowerCase().trim() === currentSelectedCourse.toLowerCase().trim() && 
                 (e.status || '').toLowerCase() === 'approved'
             );
             
@@ -1289,6 +1579,141 @@
             });
             
             displayCourseStudents(filtered);
+        };
+
+        // ✅ NEW: Certificate Upload Functions
+        window.openCertificateUpload = function(enrollmentId, studentEmail, courseName) {
+            pendingCertificateEnrollmentId = enrollmentId;
+            pendingCertificateEmail = studentEmail;
+            pendingCertificateCourseName = courseName;
+            
+            document.getElementById('certificateModalSubtitle').textContent = 
+                `Upload certificate for ${studentEmail} in ${courseName}`;
+            
+            document.getElementById('certificateModal').classList.add('active');
+            document.getElementById('certificateFileInput').value = '';
+            selectedCertificateFile = null;
+            document.getElementById('fileNameDisplay').classList.remove('show');
+            document.getElementById('uploadCertificateBtn').disabled = true;
+            
+            console.log('✅ Certificate upload modal opened');
+        };
+
+        window.closeCertificateModal = function() {
+            document.getElementById('certificateModal').classList.remove('active');
+            pendingCertificateEnrollmentId = null;
+            pendingCertificateEmail = null;
+            pendingCertificateCourseName = null;
+            selectedCertificateFile = null;
+            document.getElementById('certificateFileInput').value = '';
+            document.getElementById('fileNameDisplay').classList.remove('show');
+            document.getElementById('uploadCertificateBtn').disabled = true;
+        };
+
+        window.handleCertificateFileSelect = function() {
+            const fileInput = document.getElementById('certificateFileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                selectedCertificateFile = null;
+                document.getElementById('fileNameDisplay').classList.remove('show');
+                document.getElementById('uploadCertificateBtn').disabled = true;
+                return;
+            }
+            
+            const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
+            if (!allowedTypes.includes(file.type)) {
+                showToast('❌ Invalid file type. Please upload PDF, PNG, or JPG', 'error');
+                fileInput.value = '';
+                selectedCertificateFile = null;
+                document.getElementById('fileNameDisplay').classList.remove('show');
+                document.getElementById('uploadCertificateBtn').disabled = true;
+                return;
+            }
+            
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                showToast('❌ File too large. Maximum size is 5MB', 'error');
+                fileInput.value = '';
+                selectedCertificateFile = null;
+                document.getElementById('fileNameDisplay').classList.remove('show');
+                document.getElementById('uploadCertificateBtn').disabled = true;
+                return;
+            }
+            
+            selectedCertificateFile = file;
+            document.getElementById('selectedFileName').textContent = file.name;
+            document.getElementById('fileNameDisplay').classList.add('show');
+            document.getElementById('uploadCertificateBtn').disabled = false;
+            
+            console.log(`✅ File selected: ${file.name} (${(file.size / 1024).toFixed(2)}KB)`);
+        };
+
+        window.uploadCertificateFile = async function() {
+            if (!selectedCertificateFile || !pendingCertificateEnrollmentId) {
+                showToast('❌ No file selected', 'error');
+                return;
+            }
+            
+            try {
+                const uploadBtn = document.getElementById('uploadCertificateBtn');
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<span class="loading-spinner" style="width: 16px; height: 16px; border-width: 2px;"></span> Uploading...';
+                
+                console.log('📤 Starting certificate upload...');
+                
+                const fileExt = selectedCertificateFile.name.split('.').pop().toLowerCase();
+                const validExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+                
+                if (!validExtensions.includes(fileExt)) {
+                    throw new Error('Invalid file extension');
+                }
+                
+                const storagePath = `certificates/${pendingCertificateEmail}/${pendingCertificateCourseName}.${fileExt}`;
+                console.log(`📁 Storage path: ${storagePath}`);
+                
+                const storageRef = ref(storage, storagePath);
+                const snapshot = await uploadBytes(storageRef, selectedCertificateFile);
+                console.log(`✅ File uploaded: ${snapshot.ref.fullPath}`);
+                
+                const downloadURL = await getDownloadURL(storageRef);
+                console.log(`✅ Download URL obtained: ${downloadURL}`);
+                
+                const enrollmentRef = doc(db, 'enrollments', pendingCertificateEnrollmentId);
+                await updateDoc(enrollmentRef, {
+                    certificateURL: downloadURL
+                });
+                
+                console.log(`✅ Certificate URL saved to Firestore`);
+                
+                showToast('✅ Certificate uploaded successfully!', 'success');
+                window.closeCertificateModal();
+                
+                if (currentSelectedCourse) {
+                    const courseStudents = allEnrollments.filter(e => 
+                        e.courseName === currentSelectedCourse && 
+                        (e.status || '').toLowerCase() === 'approved'
+                    );
+                    displayCourseStudents(courseStudents);
+                }
+                
+            } catch (error) {
+                console.error('❌ Certificate upload error:', error);
+                showToast('❌ Error uploading certificate: ' + error.message, 'error');
+                const uploadBtn = document.getElementById('uploadCertificateBtn');
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Certificate';
+            }
+        };
+
+        window.viewCertificate = function(certificateURL) {
+            if (!certificateURL) {
+                showToast('❌ Certificate URL not found', 'error');
+                return;
+            }
+            
+            console.log('📄 Opening certificate:', certificateURL);
+            window.open(certificateURL, '_blank');
         };
 
         // Show Toast Notification
@@ -1339,6 +1764,14 @@
                 window.location.href = 'index.html';
             }
         };
+
+        // ✅ NEW: Close modal on outside click
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('certificateModal');
+            if (event.target === modal) {
+                window.closeCertificateModal();
+            }
+        });
 
         // Initialize
         if (document.readyState === 'loading') {
