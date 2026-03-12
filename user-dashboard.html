@@ -39,8 +39,76 @@
         .user-info { text-align: right; animation: fadeInRight .6s ease-out; }
         .user-name { font-size: 1.1rem; font-weight: 700; color: var(--primary-blue); margin-bottom: .25rem; }
         .user-email { font-size: .85rem; color: var(--concrete-gray); }
-        .user-avatar { width: 50px; height: 50px; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 700; box-shadow: 0 6px 20px rgba(79,70,229,.3); transition: all .4s ease; animation: fadeInRight .6s ease-out .2s both; }
+        
+        /* ✅ NEW: Profile Avatar Container with Dropdown */
+        .profile-container { position: relative; }
+        .user-avatar { width: 50px; height: 50px; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; font-weight: 700; box-shadow: 0 6px 20px rgba(79,70,229,.3); transition: all .4s ease; animation: fadeInRight .6s ease-out .2s both; cursor: pointer; }
         .user-avatar:hover { transform: rotate(5deg) scale(1.1); box-shadow: 0 8px 25px rgba(6,182,212,.4); }
+        
+        /* ✅ NEW: Dropdown Menu */
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 14px;
+            min-width: 220px;
+            box-shadow: 0 12px 35px rgba(0,0,0,.15);
+            border: 1px solid rgba(255,255,255,.6);
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all .3s cubic-bezier(.4,0,.2,1);
+            z-index: 1000;
+            margin-top: 0.75rem;
+        }
+        
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu {
+            list-style: none;
+            padding: 0.5rem 0;
+            margin: 0;
+        }
+        
+        .dropdown-item {
+            padding: 0.85rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            cursor: pointer;
+            transition: all .25s ease;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            color: var(--concrete-gray);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .dropdown-item:hover {
+            background: linear-gradient(135deg,rgba(79,70,229,.08) 0%,rgba(6,182,212,.08) 100%);
+            color: var(--primary-blue);
+            padding-left: 1.5rem;
+        }
+        
+        .dropdown-item i {
+            font-size: 1rem;
+            min-width: 18px;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: linear-gradient(90deg,transparent,#e5e7eb,transparent);
+            margin: 0.5rem 0;
+        }
+        
         .logout-btn { padding: .75rem 1.5rem; background: linear-gradient(135deg,var(--primary-blue) 0%,var(--secondary-purple) 100%); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all .4s cubic-bezier(.4,0,.2,1); box-shadow: 0 4px 15px rgba(79,70,229,.3); animation: fadeInRight .6s ease-out .4s both; }
         .logout-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(79,70,229,.5); }
 
@@ -85,6 +153,45 @@
         @keyframes fadeInUp  { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
         @keyframes fadeInRight { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
 
+        /* ✅ NEW: Default Message Section */
+        .default-message-section {
+            background: rgba(255,255,255,.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 4rem 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,.08);
+            text-align: center;
+            animation: fadeInUp .8s ease-out;
+            display: block;
+        }
+        
+        .default-message-section.hidden {
+            display: none;
+        }
+        
+        .default-message-icon {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg,var(--primary-blue) 0%,var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .default-message-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .default-message-subtitle {
+            font-size: 1.1rem;
+            color: var(--concrete-gray);
+            line-height: 1.6;
+        }
+
         /* Enrolled Courses Table */
         .enrolled-wrapper {
             display: none;
@@ -117,6 +224,141 @@
         .go-btn { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem 1.05rem; background: linear-gradient(135deg,#15803d 0%,#0d9488 100%); color: white; border: none; border-radius: 8px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .3s ease; white-space: nowrap; text-decoration: none; }
         .go-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(21,128,61,.35); }
         .action-none { color: #cbd5e1; font-size: .85rem; font-style: italic; }
+
+        /* ✅ NEW: Certifications Section */
+        .certifications-wrapper {
+            display: none;
+            margin-bottom: 3rem;
+            animation: fadeInUp .7s ease-out both;
+        }
+        
+        .certifications-wrapper.visible {
+            display: block;
+        }
+        
+        .certifications-card {
+            background: rgba(255,255,255,.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,.08);
+            border: 1px solid rgba(255,255,255,.6);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .certifications-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79,70,229,.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .certifications-heading {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+        
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .certificate-item {
+            background: linear-gradient(135deg, rgba(79,70,229,.05) 0%, rgba(6,182,212,.05) 100%);
+            border: 2px solid rgba(79,70,229,.15);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all .3s ease;
+            animation: fadeInUp .8s ease-out both;
+        }
+        
+        .certificate-item:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 12px 35px rgba(6,182,212,.2);
+            transform: translateY(-4px);
+        }
+        
+        .certificate-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin: 0 auto 1.2rem;
+            box-shadow: 0 6px 20px rgba(79,70,229,.3);
+        }
+        
+        .certificate-course-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .certificate-status {
+            font-size: 0.9rem;
+            color: var(--concrete-gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-purple) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s ease;
+            box-shadow: 0 4px 15px rgba(79,70,229,.3);
+            text-decoration: none;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(79,70,229,.5);
+        }
+        
+        .no-certificates {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--concrete-gray);
+        }
+        
+        .no-certificates i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .no-certificates p {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
 
         /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.6); backdrop-filter: blur(5px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity .28s ease; }
@@ -158,7 +400,7 @@
             .modal-box{border-radius:20px} .modal-head{padding:1.35rem 1.5rem 1.1rem;border-radius:20px 20px 0 0} .modal-body{padding:1.35rem 1.5rem 1.75rem} .f-row{grid-template-columns:1fr}
         }
         @media(max-width:968px){ .enrolled-top-row{flex-direction:column;align-items:flex-start} .dashboard-header{padding:1.25rem 1.5rem} .header-content{flex-direction:column;gap:1.5rem} .user-section{width:100%;justify-content:space-between} .dashboard-main{padding:2rem 1.5rem} .welcome-section{padding:2rem} .welcome-title{font-size:2rem} .courses-grid{grid-template-columns:1fr;gap:2rem} }
-        @media(max-width:480px){ .logo-text{font-size:1.2rem} .user-info{display:none} .welcome-title{font-size:1.75rem} .welcome-subtitle{font-size:1rem} }
+        @media(max-width:480px){ .logo-text{font-size:1.2rem} .user-info{display:none} .welcome-title{font-size:1.75rem} .welcome-subtitle{font-size:1rem} .profile-dropdown { min-width: 180px; } }
     </style>
 </head>
 <body>
@@ -176,10 +418,35 @@
                     <div class="user-name"  id="userName">Loading...</div>
                     <div class="user-email" id="userEmail">Loading...</div>
                 </div>
-                <div class="user-avatar" id="userAvatar">U</div>
-                <button class="logout-btn" onclick="window.handleLogout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <!-- ✅ NEW: Profile Container with Dropdown -->
+                <div class="profile-container">
+                    <div class="user-avatar" id="userAvatar" onclick="window.toggleProfileMenu()" title="Click for menu">U</div>
+                    
+                    <!-- ✅ NEW: Profile Dropdown Menu -->
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button class="dropdown-item" onclick="window.showEnrolledCourses()">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    My Enrolled Courses
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" onclick="window.showCertifications()">
+                                    <i class="fas fa-certificate"></i>
+                                    My Certifications
+                                </button>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
+                                <button class="dropdown-item" onclick="window.handleLogout()" style="color: #dc2626;">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -194,6 +461,17 @@
                 Each course offers industry-standard training and certification upon completion.
             </p>
         </section>
+
+        <!-- ✅ NEW: Default Message Section -->
+        <div class="default-message-section" id="defaultMessageSection">
+            <div class="default-message-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="default-message-text">Click Your Profile Icon</div>
+            <div class="default-message-subtitle">
+                Select "My Enrolled Courses" to view your course enrollments, or "My Certifications" to download your earned certificates.
+            </div>
+        </div>
 
         <!-- My Enrolled Courses -->
         <div class="enrolled-wrapper" id="enrolledWrapper">
@@ -222,6 +500,25 @@
                             <!-- Rows injected by _renderTable() -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ NEW: My Certifications Section -->
+        <div class="certifications-wrapper" id="certificationsWrapper">
+            <div class="certifications-card">
+                <h2 class="certifications-heading">
+                    <i class="fas fa-certificate" style="margin-right: 0.7rem; opacity: 0.85;"></i>
+                    My Certifications
+                </h2>
+                
+                <!-- Certificates Grid -->
+                <div class="certificates-grid" id="certificatesGrid">
+                    <!-- Loading state -->
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(79,70,229,.2); border-radius: 50%; border-top-color: var(--primary-blue); animation: spin 1s linear infinite;"></div>
+                        <p style="margin-top: 1rem; color: var(--concrete-gray);">Loading certificates...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -422,7 +719,7 @@
             from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import {
             getFirestore, collection, addDoc,
-            query, where, onSnapshot, serverTimestamp
+            query, where, onSnapshot, serverTimestamp, getDocs
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -585,6 +882,126 @@
 
         const _esc = s => String(s).replace(/[&<>"']/g,
             c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+        /* ✅ NEW: Profile Menu Toggle */
+        window.toggleProfileMenu = function() {
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.toggle("active");
+        };
+
+        /* ✅ NEW: Close Profile Menu */
+        function _closeProfileMenu() {
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.remove("active");
+        }
+
+        /* ✅ NEW: Click outside to close menu */
+        document.addEventListener("click", function(event) {
+            const profileContainer = document.querySelector(".profile-container");
+            if (!profileContainer.contains(event.target)) {
+                _closeProfileMenu();
+            }
+        });
+
+        /* ✅ NEW: Show Enrolled Courses Section */
+        window.showEnrolledCourses = function() {
+            console.log("📚 Showing enrolled courses");
+            _closeProfileMenu();
+            
+            document.getElementById("defaultMessageSection").classList.add("hidden");
+            document.getElementById("enrolledWrapper").classList.add("visible");
+            document.getElementById("certificationsWrapper").classList.remove("visible");
+        };
+
+        /* ✅ NEW: Show Certifications Section */
+        window.showCertifications = async function() {
+            console.log("📜 Showing certifications");
+            _closeProfileMenu();
+            
+            document.getElementById("defaultMessageSection").classList.add("hidden");
+            document.getElementById("enrolledWrapper").classList.remove("visible");
+            document.getElementById("certificationsWrapper").classList.add("visible");
+            
+            // ✅ NEW: Fetch certificates from Firestore
+            await _fetchCertificates();
+        };
+
+        /* ✅ NEW: Fetch Certificates from Firestore */
+        async function _fetchCertificates() {
+            try {
+                console.log("🔍 Fetching certificates for:", _user.email);
+                
+                const q = query(
+                    collection(db, "enrollments"),
+                    where("email", "==", _user.email)
+                );
+                
+                const snap = await getDocs(q);
+                const certificates = [];
+                
+                snap.forEach(doc => {
+                    const enrollment = doc.data();
+                    // Only include enrollments with certificateURL
+                    if (enrollment.certificateURL && enrollment.courseName) {
+                        certificates.push({
+                            id: doc.id,
+                            courseName: enrollment.courseName,
+                            certificateURL: enrollment.certificateURL,
+                            status: enrollment.status || "approved"
+                        });
+                    }
+                });
+                
+                console.log(`📜 Found ${certificates.length} certificates`);
+                _renderCertificates(certificates);
+                
+            } catch (error) {
+                console.error("❌ Error fetching certificates:", error);
+                _renderCertificates([]);
+            }
+        }
+
+        /* ✅ NEW: Render Certificates */
+        function _renderCertificates(certificates) {
+            const grid = document.getElementById("certificatesGrid");
+            
+            if (!certificates.length) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1;">
+                        <div class="no-certificates">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>No certificates yet. Keep learning to earn your certificates!</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = certificates.map((cert, idx) => `
+                <div class="certificate-item" style="animation-delay: ${idx * 0.1}s;">
+                    <div class="certificate-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <div class="certificate-course-name">${_esc(cert.courseName)}</div>
+                    <div class="certificate-status">Status: <strong>Earned</strong></div>
+                    <button class="download-btn" onclick="window.downloadCertificate('${cert.certificateURL}', '${_esc(cert.courseName)}')">
+                        <i class="fas fa-download"></i> Download Certificate
+                    </button>
+                </div>
+            `).join("");
+        }
+
+        /* ✅ NEW: Download Certificate */
+        window.downloadCertificate = function(certificateURL, courseName) {
+            if (!certificateURL) {
+                console.error("❌ No certificate URL found");
+                return;
+            }
+            
+            console.log("📥 Downloading certificate for:", courseName);
+            // Open in new tab
+            window.open(certificateURL, "_blank");
+        };
 
         window.handleLogout = async function() {
             try {
